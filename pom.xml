@@ -90,6 +90,7 @@
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
+							<version>1.18.28</version>	<!-- 추가됨 -->
 						</path>
 					</annotationProcessorPaths>
 				</configuration>

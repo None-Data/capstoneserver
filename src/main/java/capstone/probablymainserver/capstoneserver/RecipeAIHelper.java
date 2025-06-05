@@ -16,24 +16,27 @@ public class RecipeAIHelper {//RecipeAIHelper.getRecipeFromAI(prompt)를 호출�
     private static final String API_KEY = "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";
     private static final int MAX_TOKENS = 4096;
     
-    /*
+    
     public static void main(String[] args) {
-    	String a = ingredientsTemporaryEntry();
+    	String a = subIngredientsTemporaryEntry();
+    	String d = mainIngredientsTemporaryEntry();
     	String b = prohibitedFoodsTemporaryEntry();
     	String c = cookerTemporaryEntry();
     	
-    	String recipe = Meal(a, b, c);
+    	String recipe = Meal(a, b, c, d);
         System.out.println("\n=== AI가 추천하는 레시피 ===\n");
         System.out.println(recipe);
     }
-    */
-    public static String Meal(String Ing, String Banned, String Tools) {//메인요리 레시피 추천 프롬프트
+    
+    public static String Meal(String subIng, String Banned, String Tools, String mainIng) {//메인요리 레시피 추천 프롬프트
     	
-    	String ingredients = Ing;
+    	String subIngredients = subIng;
     	String prohibitedFoods = Banned;
     	String cooker = Tools;
+    	String mainIngredients = mainIng;
     	
-    	String prompt = "내가 재료를 말하면 그 재료만 활용해서 만들 수 있는 음식 레시피를 추천해줘. 이 재료 외에는 사용하지 말아줘.: " + ingredients
+    	String prompt = "내가 재료를 말하면 그 재료만 활용해서 만들 수 있는 음식 레시피를 추천해줘. 이 재료 외에는 사용하지 말아줘.: " + subIngredients
+    			+ "\n이 재료는 반드시 사용해줘.: " + mainIngredients
     			+ "\n이 재료들은 사용하면 안돼.: " + prohibitedFoods
     			+ "\n이 요리도구들만 활용할 수 있어. 다른 요리도구는 없어.: " + cooker
                 + "\n음식레시피를 작성할 때는 재료/음식 만드는 과정과 각 과정에서 넣어야 하는 재료와 재료의 양 그리고 각 단계에서 음식을 만들면서 걸리는 시간들을 정확히 기재해 줘. 보기 쉽고 간결하게 작성하는 걸 잊지 마."
@@ -44,12 +47,20 @@ public class RecipeAIHelper {//RecipeAIHelper.getRecipeFromAI(prompt)를 호출�
     	return recipe;
     }
     
-    public static String ingredientsTemporaryEntry() {//재료 임시 기입
+    public static String mainIngredientsTemporaryEntry() {//서브 재료 임시 기입
     	Scanner scanner = new Scanner(System.in);
-    	System.out.println("사용 가능한 재료를 입력하세요 (쉼표로 구분): ");
+    	System.out.println("메인 재료(필수)를 입력하세요 (쉼표로 구분): ");
     	String ingredients = scanner.nextLine();
 
     	return ingredients;
+    }
+    
+    public static String subIngredientsTemporaryEntry() {//서브 재료 임시 기입
+    	Scanner scanner = new Scanner(System.in);
+    	System.out.println("사용 가능한 재료를 입력하세요 (쉼표로 구분): ");
+    	String subingredients = scanner.nextLine();
+
+    	return subingredients;
     }
     
     public static String prohibitedFoodsTemporaryEntry() {//금지식품 임시 기입

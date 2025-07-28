@@ -29,7 +29,6 @@ public class MyController {
 		 * 이 파트에는 원래 유저 데이터를 체크하는 코드가 들어가야합니다.
 		 */
 		
-		ObjectMapper objMpr = new ObjectMapper();
 		List<Recipe> recipeList = new ArrayList<>();
 		
 		StringBuilder main = new StringBuilder();

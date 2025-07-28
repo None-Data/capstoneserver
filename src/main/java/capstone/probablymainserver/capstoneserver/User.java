@@ -3,6 +3,7 @@ package capstone.probablymainserver.capstoneserver;
 import java.util.ArrayList;
 
 public class User {
+	private int uid;	// 유저 고유 아이디
 	private String name;	// 유저 이름
 	private Long tools;	// 보유 도구들
 	private ArrayList<Ingredient> ingredients;	// 보유 식재료
@@ -10,6 +11,16 @@ public class User {
 	private ArrayList<Recipe> storedRecipe;		// 저장된 레시피 (코드가 없는)
 	private Long banned;	// 금지 식재료
 	
+	
+	public void setUid(int id)
+	{
+		uid = id;
+		return;
+	}
+	public int getUid()
+	{
+		return uid;
+	}
 	public String getName()	
 	{
 		return name;

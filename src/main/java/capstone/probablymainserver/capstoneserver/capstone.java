@@ -4,49 +4,72 @@ import java.sql.*;
 import java.util.*;
 
 public class capstone {
-	public static User Login(String UserID, String PassWord) {
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		int myUID;
-		String userID;
-		Long tools;
-		Long banned;
-		
-		try {
-			conn = DatabaseUtil.getConnection();
-			
-			if (checkUserID(UserID) == false) { // 아이디 존재 확인
-				return null; // 존재하지 않는 아이디
-			}
-			String sql = "SELECT uid, username, tool, allergy FROM user WHERE username = ? AND userpw = ?";
-			stmt = conn.prepareStatement(sql);
-			stmt.setString(1, UserID);
-			stmt.setString(2, PassWord);
-			ResultSet rs = stmt.executeQuery();
-			
-			if (rs.next()) {
-				User user = new User();
-				myUID = rs.getInt("uid");
-				userID = rs.getString("username");
-				tools = rs.getLong("tool");
-				banned = rs.getLong("allergy");
-				user.setUid(myUID);
-				user.setName(userID);
-				user.setTools(tools);
-				user.setBanned(banned);
-				return user;
-			} else {
-				return null;
-			}
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		} finally {
-			DatabaseUtil.close(stmt);
-			DatabaseUtil.close(conn);
-		}
+	public static boolean Login(String userId, String password) {
+	    Connection conn = null;
+	    PreparedStatement stmt = null;
+
+	    try {
+	        conn = DatabaseUtil.getConnection();
+
+	        // 아이디 존재 확인
+	        if (!checkUserID(userId)) {
+	            return false; // 존재하지 않는 아이디
+	        }
+
+	        String sql = "SELECT 1 FROM user WHERE username = ? AND userpw = ?";
+	        stmt = conn.prepareStatement(sql);
+	        stmt.setString(1, userId);
+	        stmt.setString(2, password);
+	        ResultSet rs = stmt.executeQuery();
+
+	        return rs.next(); // 결과가 있으면 로그인 성공
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return false;
+	    } finally {
+	        DatabaseUtil.close(stmt);
+	        DatabaseUtil.close(conn);
+	    }
 	}
+
+	public static User getUser(String userId) {
+	    Connection conn = null;
+	    PreparedStatement stmt = null;
+
+	    try {
+	        conn = DatabaseUtil.getConnection();
+
+	        // 아이디 존재 확인 (선택사항)
+	        if (!checkUserID(userId)) {
+	            return null; // 존재하지 않는 아이디
+	        }
+
+	        String sql = "SELECT uid, username, tool, allergy FROM user WHERE username = ?";
+	        stmt = conn.prepareStatement(sql);
+	        stmt.setString(1, userId);
+	        ResultSet rs = stmt.executeQuery();
+
+	        if (rs.next()) {
+	            User user = new User();
+	            user.setUid(rs.getInt("uid"));
+	            user.setName(rs.getString("username"));
+	            user.setTools(rs.getLong("tool"));
+	            user.setBanned(rs.getLong("allergy"));
+	            return user;
+	        } else {
+	            return null;
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return null;
+	    } finally {
+	        DatabaseUtil.close(stmt);
+	        DatabaseUtil.close(conn);
+	    }
+	}
+
 	
 	public static boolean checkUserID(String UserID) {
 		String sql = "SELECT uid FROM user WHERE username = ?";

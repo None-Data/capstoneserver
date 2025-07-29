@@ -1,5 +1,5 @@
 package capstone.probablymainserver.capstoneserver;
-
+/*
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,4 +79,4 @@ public class AuthController {
 		// 유저 정보 갱신
 		return null;
 	}
-}
+}*/

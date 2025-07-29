@@ -32,7 +32,7 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
-    	
+    	System.out.println("[Log] /api/login 요청 도착");
         // 1. 직접 로그인 메서드로 사용자 인증
         boolean isAuthenticated = capstone.Login(loginRequest.userId(), loginRequest.password());
 

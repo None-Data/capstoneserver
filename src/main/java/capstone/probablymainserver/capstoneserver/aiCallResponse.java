@@ -20,8 +20,7 @@ public class aiCallResponse {
     	
     	return recipe;
     }
-	/*
-	public static String Meal1(String subIng, String Banned, String Tools, String mainIng) {//메인요리 레시피 추천 프롬프트
+	public static String MealByMain(String mainIng, String subIng, String Banned, String Tools) {//메인요리 레시피 추천 프롬프트
     	
     	String subIngredients = subIng;
     	String prohibitedFoods = Banned;
@@ -39,7 +38,6 @@ public class aiCallResponse {
     	
     	return recipe;
     }
-    */
 	/*
 	public static String ingredientsCommenSense() { //랜덤 식재료 상식 프롬프트
 		String prompt = "랜덤으로 하나의 식재료에 대한 정보를 알려줘"

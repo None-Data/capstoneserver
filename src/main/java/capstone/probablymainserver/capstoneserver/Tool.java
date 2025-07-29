@@ -1,5 +1,7 @@
 package capstone.probablymainserver.capstoneserver;
 
+import java.util.ArrayList;
+
 public class Tool {
 	// 17가지 도구
 	final static String[] NAME = new String[] {"프라이팬", "냄비", "웍", "밀대", "믹서기", "핸드블랜더", "거품기", "연육기", "착즙기", "전자레인지", "가스레인지", "오븐", "에어프라이어", "주전자", "압력솥", "토스터", "찜기"};
@@ -41,4 +43,35 @@ public class Tool {
 			return (long)Math.pow(2, t);
 		}
 	}
+	public static String getToolListByCodes(long code)
+	{
+		ArrayList<String> tools = new ArrayList<>();
+		
+		for (int i = 0; i < NAME.length; i++)
+		{
+			long mask = 1L << i;
+			if ((code & mask) != 0)
+			{
+				tools.add(NAME[i]);
+			}
+		}
+		return String.join(",", tools);
+	}
+	public static long getCodeByToolList(String toolList) {
+	    long code = 0L;
+
+	    // 문자열을 쉼표 기준으로 나눔
+	    String[] tools = toolList.split(",");
+
+	    for (String tool : tools) {
+	        tool = tool.trim(); // 공백 제거
+	        long bitCode = codeByBit(tool);
+	        if (bitCode != -1) {
+	            code |= bitCode; // 비트 OR 연산으로 누적
+	        }
+	    }
+
+	    return code;
+	}
+
 }

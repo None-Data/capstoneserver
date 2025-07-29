@@ -15,6 +15,8 @@ public class RecipesController {
 	{
 		System.out.println("[Log] recipes/searchFromDB commanded");
 		
+		
+		
 		// DB에서 해당하는 데이터의 레시피 목록 추출후 제공
 		return null;
 	}
@@ -27,18 +29,19 @@ public class RecipesController {
 		
 		// 알러지 등 금지 목록 지정
 		String BannedIng = "NULL";
-		String ToolsHave = "ANYWAY";
+		String ToolsHave = Tool.getToolListByCodes(dfgr.getTool());
 		// AI 체크
 		
 		List<Recipe> recipeList = new ArrayList<>();
-		
-		StringBuilder main = new StringBuilder();
-	    for (Ingredient i : dfgr.getMainIngredients())
+	    String aiResponse;
+	    if (dfgr.getMainIngredients() != null)
 	    {
-	        main.append(i.getName()).append(", ");
+	    	aiResponse = aiCallResponse.MealByMain(dfgr.getMainIngredients().getName(), dfgr.getSubIngList(), BannedIng, ToolsHave);
 	    }
-	    
-	    String aiResponse = aiCallResponse.Meal(main.toString(), BannedIng, ToolsHave);
+	    else
+	    {
+	    	aiResponse = aiCallResponse.Meal(dfgr.getSubIngList(), BannedIng, ToolsHave);
+	    }
 	    
 	    for (String line : aiResponse.split("\n"))
 	    {

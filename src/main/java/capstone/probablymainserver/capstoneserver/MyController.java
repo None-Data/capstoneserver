@@ -21,6 +21,33 @@ public class MyController {
 		this.recipeSearch = recipeSearch;
 	}
 	
+	@PostMapping("/getRecipe")
+	public ResponseEntity<List<Recipe>> getRecipe(@RequestBody DataForGetRecipe data)
+	{
+		System.out.println("[LOG] getRecipe commanded");
+		/* 
+		 * 이 파트에는 원래 유저 데이터를 체크하는 코드가 들어가야합니다.
+		 */
+		
+		List<Recipe> recipeList = new ArrayList<>();
+		
+		StringBuilder main = new StringBuilder();
+	    for (Ingredient i : data.getMainIngredients())
+	    {
+	        main.append(i.getName()).append(", ");
+	    }
+	    
+	    String aiResponse = aiCallResponse.Meal(main.toString(), "NULL", "프라이팬");
+	    
+	    for (String line : aiResponse.split("\n"))
+	    {
+	    	Recipe r = UseAi.makeRecipe(line);
+	    	
+	    	recipeList.add(r);
+	    }
+	    return ResponseEntity.ok(recipeList);
+	}
+	
 	@GetMapping("/getRecipe3")
 	public ResponseEntity<List<Recipe>> getRecipe3()
 	{

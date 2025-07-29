@@ -12,6 +12,7 @@ public class Recipe {
 	private ArrayList<Ingredient> mainIngredients;	// 메인 재료
 	private ArrayList<Ingredient> subIngredients;	// 서브 재료
 	private String time;	// 소요 시간
+	private int ai;	// ai가 만들었어?
 	
 	public int getCode()
 	{

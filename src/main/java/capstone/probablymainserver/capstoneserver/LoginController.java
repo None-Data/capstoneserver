@@ -32,7 +32,8 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
-        // 1. 직접 만드신 로그인 메서드로 사용자 인증
+    	
+        // 1. 직접 로그인 메서드로 사용자 인증
         boolean isAuthenticated = capstone.Login(loginRequest.userId(), loginRequest.password());
 
         if (isAuthenticated) {
@@ -49,6 +50,7 @@ public class LoginController {
     
     @PostMapping("/signup")
     public ResponseEntity<Integer> signup(@RequestBody SignupRequest request) {
+    	System.out.println("[Log] /api/signup 요청 도착: id=" + request.id());
         int success = UserManager.registerUser(request.id(), request.pw());
         return ResponseEntity.ok(success);
     }

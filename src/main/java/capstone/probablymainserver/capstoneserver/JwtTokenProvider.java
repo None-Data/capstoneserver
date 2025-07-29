@@ -19,11 +19,13 @@ public class JwtTokenProvider {
 
     // application.properties 파일에서 설정값 주입
     public JwtTokenProvider(@Value("${jwt.secret}") String secretKey,
-                            @Value("${jwt.expiration-in-ms}") long validityInMs) {
-        byte[] keyBytes = Base64.getDecoder().decode(secretKey);
-        this.key = Keys.hmacShaKeyFor(keyBytes);
-        this.validityInMilliseconds = validityInMs;
-    }
+            @Value("${jwt.expiration-in-ms}") long validityInMs) {
+		System.out.println("Raw secretKey: [" + secretKey + "]");
+		secretKey = secretKey.trim();
+		byte[] keyBytes = Base64.getDecoder().decode(secretKey);
+		this.key = Keys.hmacShaKeyFor(keyBytes);
+		this.validityInMilliseconds = validityInMs;
+	}
 
     // 사용자 ID를 기반으로 토큰 생성
     public String createToken(String userId) {

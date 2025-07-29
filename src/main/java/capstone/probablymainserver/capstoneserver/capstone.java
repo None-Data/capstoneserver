@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.*;
 
 public class capstone {
-	public User Login(String UserID, String PassWord) {
+	public static User Login(String UserID, String PassWord) {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		int myUID;
@@ -48,7 +48,7 @@ public class capstone {
 		}
 	}
 	
-	public boolean checkUserID(String UserID) {
+	public static boolean checkUserID(String UserID) {
 		String sql = "SELECT uid FROM user WHERE username = ?";
 
         try (

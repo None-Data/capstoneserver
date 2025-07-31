@@ -12,8 +12,8 @@ public class Tool {
 	}
 	public static String nameByBit(Long code)	// 비트기반으로 NAME 반환
 	{
-		int t = code.intValue() / 2;
-		return NAME[t];
+		long t = code / 2;
+		return NAME[(int)t];
 	}
 	public static Long code(String str)	// 해당하는 도구의 인덱스 반환 (-1은 검색 실패)
 	{
@@ -28,7 +28,7 @@ public class Tool {
 	}
 	public static Long codeByBit(String str)	// 해당하는 도구의 코드 반환
 	{
-		Long t = (long)-1;
+		Long t = -1L;
 		for (int i = 0; i < 17; i++)
 		{
 			if (str.compareTo(NAME[i]) == 0)
@@ -43,13 +43,13 @@ public class Tool {
 			return (long)Math.pow(2, t);
 		}
 	}
-	public static String getToolListByCodes(long code)
+	public static String getToolListByCodes(Long code)
 	{
 		ArrayList<String> tools = new ArrayList<>();
 		
 		for (int i = 0; i < NAME.length; i++)
 		{
-			long mask = 1L << i;
+			Long mask = 1L << i;
 			if ((code & mask) != 0)
 			{
 				tools.add(NAME[i]);
@@ -57,8 +57,8 @@ public class Tool {
 		}
 		return String.join(",", tools);
 	}
-	public static long getCodeByToolList(String toolList) {
-	    long code = 0L;
+	public static Long getCodeByToolList(String toolList) {
+		Long code = 0L;
 
 	    // 문자열을 쉼표 기준으로 나눔
 	    String[] tools = toolList.split(",");

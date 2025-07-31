@@ -9,8 +9,7 @@ public class User {
 	private String password;	// 유저 비번
 	private Long tools;	// 보유 도구들
 	private ArrayList<Ingredient> ingredients;	// 보유 식재료
-	private ArrayList<Integer> uploadedRecipe;	// 저장된 레시피 (코드가 있는)
-	private ArrayList<Recipe> storedRecipe;		// 저장된 레시피 (코드가 없는)
+	private ArrayList<Recipe> Recipes;	// 저장된 레시피
 	private Long banned;	// 금지 식재료
 	
 	
@@ -32,16 +31,7 @@ public class User {
 		name = n;
 		return;
 	}
-	public boolean setTools(Long l)
-	{
-		tools = l;
-		return true;
-	}
-	public Long getTools()
-	{
-		return tools;
-	}
-	public boolean addTools(Long l)
+	public boolean addTools(int l)
 	{
 		if ((tools & l) == l)
 		{
@@ -50,7 +40,7 @@ public class User {
 		else tools += l;
 		return true;
 	}
-	public boolean removeTools(Long l)
+	public boolean removeTools(int l)
 	{
 		if ((tools & l) == l)
 		{
@@ -77,53 +67,7 @@ public class User {
 	{
 		ingredients.remove(i);
 	}
-	public int[] getUploadedRecipe()
-	{
-		int[] data = new int[uploadedRecipe.size()];
-		for (int i = 0; i < uploadedRecipe.size(); i++)
-		{
-			data[i] = uploadedRecipe.get(i);
-		}
-		return data;
-	}
-	public void addUploadedRecipe(int data)
-	{
-		uploadedRecipe.add(data);
-		return;
-	}
-	public void removeUploadedRecipe(int data)
-	{
-		uploadedRecipe.remove(Integer.valueOf(data));
-		return;
-	}
-	public ArrayList<Recipe> getStoredRecipe()
-	{
-		return storedRecipe;
-	}
-	public void addStoredRecipe(Recipe data)
-	{
-		storedRecipe.add(data);
-	}
-	public void removeStoredRecipe(int index)
-	{
-		storedRecipe.remove(index);
-		return;
-	}
-	public void removeStoredRecipe(Recipe data)
-	{
-		storedRecipe.remove(data);
-		return;
-	}
-	public boolean setBanned(Long l)
-	{
-		banned = l;
-		return true;
-	}
-	public Long getBanned()
-	{
-		return banned;
-	}
-	public boolean addBanned(Long l)
+	public boolean addBanned(int l)
 	{
 		if ((banned & l) == l)
 		{
@@ -132,7 +76,7 @@ public class User {
 		else banned += l;
 		return true;
 	}
-	public boolean removeBanned(Long l)
+	public boolean removeBanned(int l)
 	{
 		if ((banned & l) == l)
 		{
@@ -141,4 +85,35 @@ public class User {
 		}
 		else return false;
 	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public Long getTools() {
+		return tools;
+	}
+	public void setTools(Long tools) {
+		this.tools = tools;
+	}
+	public ArrayList<Recipe> getRecipes() {
+		return Recipes;
+	}
+	public void setRecipes(ArrayList<Recipe> recipes) {
+		Recipes = recipes;
+	}
+	public Long getBanned() {
+		return banned;
+	}
+	public void setBanned(Long banned) {
+		this.banned = banned;
+	}
+	
 }

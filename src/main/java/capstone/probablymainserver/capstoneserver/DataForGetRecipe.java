@@ -3,25 +3,11 @@ package capstone.probablymainserver.capstoneserver;
 import java.util.ArrayList;
 
 public class DataForGetRecipe {
-	private String userID;
-	private String password;
 	private Ingredient mainIngredients;	// 메인 재료
 	private ArrayList<Ingredient> subIngredients;	// 서브 재료
-	private Long Banned;
-	private Long Tool;
+	private int Banned;
+	private int Tool;
 	
-	public String getUserID() {
-		return userID;
-	}
-	public void setUserID(String userID) {
-		this.userID = userID;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
-	}
 	public Ingredient getMainIngredients() {
 		return mainIngredients;
 	}
@@ -34,16 +20,16 @@ public class DataForGetRecipe {
 	public void setSubIngredients(ArrayList<Ingredient> subIngredients) {
 		this.subIngredients = subIngredients;
 	}
-	public Long getBanned() {
+	public int getBanned() {
 		return Banned;
 	}
-	public void setBanned(Long banned) {
+	public void setBanned(int banned) {
 		Banned = banned;
 	}
-	public Long getTool() {
+	public int getTool() {
 		return Tool;
 	}
-	public void setTool(Long tool) {
+	public void setTool(int tool) {
 		Tool = tool;
 	}
 	public String getSubIngList()

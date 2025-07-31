@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,7 +52,8 @@ public class LoginController {
     @PostMapping("/signup")
     public ResponseEntity<Integer> signup(@RequestBody SignupRequest request) {
     	System.out.println("[Log] /api/signup 요청 도착: id=" + request.id());
-        int success = UserManager.registerUser(request.id(), request.pw());
+    	
+        int success = capstone.registerUser(request.id(), request.pw());
         return ResponseEntity.ok(success);
     }
     
@@ -73,6 +75,14 @@ public class LoginController {
         user.setUid(0);
         return ResponseEntity.ok(user);
     }
-
+    
+    @PutMapping("/update")
+    public ResponseEntity<Integer> updateUserData(@RequestBody User user)
+    {
+    	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String userId = (String) auth.getPrincipal();
+        
+        
+    }
     
 }

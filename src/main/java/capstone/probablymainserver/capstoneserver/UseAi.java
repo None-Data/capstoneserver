@@ -34,4 +34,18 @@ public class UseAi {
 		recipe.setRecipe(r);
 		return recipe;
 	}
+	public static Ingredient makeIngredient(String data)
+	{
+		Ingredient ing = new Ingredient();
+		String[] tdata = data.split("\\$");
+		
+		ing.setName(tdata[0]);
+		ing.setDescription(tdata[1]);
+		return ing;
+	}
+	public static void setTodayIngredient()
+	{
+		Ingredient.today = UseAi.makeIngredient(aiCallResponse.ingredientsCommenSense());
+		return;
+	}
 }

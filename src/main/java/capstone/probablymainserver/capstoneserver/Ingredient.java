@@ -4,6 +4,7 @@ public class Ingredient extends Item {
 	private int type = 0;
 	private String count;
 	private static final String[] TYPE = {"미분류", "육류", "채소", "과일", "유제품", "가공식품", "기타"};
+	public static Ingredient today;
 	
 	public int getType()
 	{

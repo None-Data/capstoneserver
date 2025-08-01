@@ -20,9 +20,9 @@ public class RecipesController {
 		System.out.println("[Log] recipes/searchFromDB commanded");
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String userId = (String) auth.getPrincipal();
+        int uid = (int) auth.getPrincipal();
         
-        return ResponseEntity.ok(capstone.RecipeListSearchFromDB(req.ing(), userId));
+        return ResponseEntity.ok(capstone.RecipeListSearchFromDB(req.ing(), uid));
 	}
 	@PostMapping("/searchFromAI")
 	public ResponseEntity<List<Recipe>> searchFromAI(@RequestBody DataForGetRecipe dfgr)
@@ -61,7 +61,7 @@ public class RecipesController {
 		System.out.println("[Log} recipes/like commanded");
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String uid = (String) auth.getPrincipal();
+        int uid = (int) auth.getPrincipal();
         
         return ResponseEntity.ok(capstone.RecipeAddInAILike(recipe, uid));
 		// 해당 레시피의 코드를 유저의 찜 목록에 등록하기 (검사 필수)
@@ -72,7 +72,7 @@ public class RecipesController {
 		System.out.println("[Log} recipes/delike commanded");
 
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String uid = (String) auth.getPrincipal();
+        int uid = (int) auth.getPrincipal();
         
 		return ResponseEntity.ok(capstone.RecipeDeleteInAILike(rcode, uid));
 		// postID에 해당하는 찜 목록의 레시피 찜 취소
@@ -83,18 +83,21 @@ public class RecipesController {
 		System.out.println("[Log] recipes/liked commanded");
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String uid = (String) auth.getPrincipal();
+        int uid = (int) auth.getPrincipal();
 		
 		// 해당 유저가 찜한 모든 레시피 출력
-		return null;
+		return ResponseEntity.ok(capstone.showRecipeInAILike(uid));
 	}
 	@GetMapping("added")
 	public ResponseEntity<List<Recipe>> getRecipeAddedByUser()
 	{
 		System.out.println("[Log] recipes/addedList commanded");
 		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        int uid = (int) auth.getPrincipal();
+        
 		// 해당 유저가 등록한 레시피 목록 출력
-		return null;
+		return ResponseEntity.ok(capstone.showRecipeInDB(uid));
 	}
 	@PostMapping("added")
 	public ResponseEntity<Integer> addRecipe(@RequestBody Recipe data)
@@ -102,7 +105,7 @@ public class RecipesController {
 		System.out.println("[Log] recipes/add commanded");
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String uid = (String) auth.getPrincipal();
+        int uid = (int) auth.getPrincipal();
         
         return ResponseEntity.ok(capstone.RecipeAddInDB(data, uid));
 		// 해당 레시피를 등록.
@@ -117,16 +120,15 @@ public class RecipesController {
 		// 해당 레시피를 수정
 	}
 	@DeleteMapping("added")
-	public ResponseEntity<Integer> deleteRecipe(@RequestParam("recipeCode") long rcode)
+	public ResponseEntity<Integer> deleteRecipe(@RequestParam("recipeCode") int rcode)
 	{
 		System.out.println("[Log] recipes/delete commanded");
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String uid = (String) auth.getPrincipal();
+        int uid = (int) auth.getPrincipal();
         
 		return ResponseEntity.ok(capstone.RecipeDeleteInDB(rcode, uid));
 		// 해당 레시피 삭제
-		return null;
 	}
 	@GetMapping("recipetoday")
 	public ResponseEntity<Recipe> recipeToday()
@@ -140,8 +142,7 @@ public class RecipesController {
 	public ResponseEntity<Ingredient> ingredientToday()
 	{
 		System.out.println("[Log] recipes/ingredientToday commanded");
-		
-		// 미완
-		return null;
+
+		return ResponseEntity.ok(Ingredient.today);
 	}
 }

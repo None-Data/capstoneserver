@@ -1,5 +1,6 @@
 package capstone.probablymainserver.capstoneserver;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -35,11 +36,11 @@ public class LoginController {
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
     	System.out.println("[Log] /api/login 요청 도착");
         // 1. 직접 로그인 메서드로 사용자 인증
-        boolean isAuthenticated = capstone.Login(loginRequest.userId(), loginRequest.password());
+        int uid = capstone.Login(loginRequest.userId(), loginRequest.password());
 
-        if (isAuthenticated) {
+        if (uid > 0) {
             // 2. 인증 성공 시 JWT 생성
-            String token = jwtTokenProvider.createToken(loginRequest.userId());
+            String token = jwtTokenProvider.createToken(uid);
             
             // 3. 생성된 토큰을 응답
             return ResponseEntity.ok(new LoginResponse(token));
@@ -61,12 +62,12 @@ public class LoginController {
     public ResponseEntity<?> me() {
         // JWT 필터를 통해 이미 인증된 사용자 정보가 SecurityContext에 있음
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String userId = (String) auth.getPrincipal();  // 토큰에서 추출된 userId
+        int uid = (int)auth.getPrincipal();  // 토큰에서 추출된 uId
 
-        System.out.println("[Log] auth/me commanded " + userId);
+        System.out.println("[Log] auth/me commanded");
 
         // userId로 사용자 조회 (비밀번호는 필요 없음)
-        User user = capstone.getUser(userId); // 또는 userService.findUser(userId)
+        User user = capstone.getUser(uid); // 또는 userService.findUser(userId)
 
         if (user == null) {
             return ResponseEntity.status(401).body("유저 정보 없음");
@@ -80,9 +81,41 @@ public class LoginController {
     public ResponseEntity<Integer> updateUserData(@RequestBody User user)
     {
     	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String userId = (String) auth.getPrincipal();
+        int uid = (int) auth.getPrincipal();
+        User prev = capstone.getUser(uid);	// 얘는 uid, userID,tools,banned, ing 밖에 없음!
         
+        if (!user.getUserId().equals(prev.getUserId()))
+        {
+        	capstone.updateUserID(user.getUserId(), uid);
+        }
+        if (!user.getPassword().equals(prev.getPassword()))
+        {
+        	capstone.updateUserPW(user.getPassword(), uid);
+        }
+        if (user.getTools() != prev.getTools())
+        {
+        	capstone.updateUserTools(user.getTools(), uid);
+        }
+        if (user.getBanned() != prev.getBanned())
+        {
+        	capstone.updateUserTools(user.getBanned(), uid);
+        }
         
+        for (Ingredient ing : prev.getIngredients())
+        {
+        	if (!user.getIngredients().contains(ing))
+        	{
+        		capstone.removeIngredient(ing, uid);
+        	}
+        }
+        for (Ingredient ing : user.getIngredients())
+        {
+        	if (!prev.getIngredients().contains(ing))
+        	{
+        		capstone.addIngredient(ing, uid);
+        	}
+        }
+        return ResponseEntity.ok(1);
     }
     
 }

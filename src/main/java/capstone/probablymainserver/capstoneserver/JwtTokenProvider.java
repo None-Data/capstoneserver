@@ -28,12 +28,12 @@ public class JwtTokenProvider {
 	}
 
     // 사용자 ID를 기반으로 토큰 생성
-    public String createToken(String userId) {
+    public String createToken(int uid) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
 
         return Jwts.builder()
-            .setSubject(userId) // 토큰의 주체 (사용자 ID)
+            .setSubject(Integer.toString(uid)) // 토큰의 주체 (사용자 ID)
             .setIssuedAt(now)   // 발급 시간
             .setExpiration(validity) // 만료 시간
             .signWith(key, SignatureAlgorithm.HS256) // 서명
@@ -41,13 +41,13 @@ public class JwtTokenProvider {
     }
     
     // 토큰에서 사용자 ID 추출
-    public String getUserId(String token) {
-        return Jwts.parserBuilder()
+    public int getUserId(String token) {
+        return Integer.parseInt(Jwts.parserBuilder()
             .setSigningKey(key)
             .build()
             .parseClaimsJws(token)
             .getBody()
-            .getSubject();
+            .getSubject());
     }
     
     // 토큰 유효성 검증

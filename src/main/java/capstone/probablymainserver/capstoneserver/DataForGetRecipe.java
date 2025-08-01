@@ -5,8 +5,8 @@ import java.util.ArrayList;
 public class DataForGetRecipe {
 	private Ingredient mainIngredients;	// 메인 재료
 	private ArrayList<Ingredient> subIngredients;	// 서브 재료
-	private int Banned;
-	private int Tool;
+	private long Banned;
+	private long Tool;
 	
 	public Ingredient getMainIngredients() {
 		return mainIngredients;
@@ -20,16 +20,16 @@ public class DataForGetRecipe {
 	public void setSubIngredients(ArrayList<Ingredient> subIngredients) {
 		this.subIngredients = subIngredients;
 	}
-	public int getBanned() {
+	public long getBanned() {
 		return Banned;
 	}
-	public void setBanned(int banned) {
+	public void setBanned(long banned) {
 		Banned = banned;
 	}
-	public int getTool() {
+	public long getTool() {
 		return Tool;
 	}
-	public void setTool(int tool) {
+	public void setTool(long tool) {
 		Tool = tool;
 	}
 	public String getSubIngList()

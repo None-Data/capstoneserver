@@ -38,7 +38,6 @@ public class aiCallResponse {
     	
     	return recipe;
     }
-	/*
 	public static String ingredientsCommenSense() { //랜덤 식재료 상식 프롬프트
 		String prompt = "랜덤으로 하나의 식재료에 대한 정보를 알려줘"
     			+ "\n밑에 있는 줄의 글과 형태가 똑같이 한줄로 출력해줘. \n고구마@고구마는 강력한 항산화 기능을 가진 식재료로 칼로리가 낮아 다이어트 식품으로 좋다. 고구마는 비타민A, 비타민C 그리고 식이섬유가 풍부하므로 소화기능을 돕고, 안구건조증과 백내장 예방에도 효과적이다. 특히, 고구마에는 '다이어트 폴리페놀'이라는 물질이 들어 있어 혈당 조절과 비만 및 당뇨병 예방에 도움이 된다. 또한, 면역력을 높이고 피로 회복에도 뛰어나다.";
@@ -47,7 +46,6 @@ public class aiCallResponse {
     	
     	return recipe;
 	}
-	*/
 	/*
 	public static String ingredientsIntroduce(String ingredients) { //지정 식재료 상식 프롬프트
 		String prompt = ingredients + "에 대한 정보를 알려줘"

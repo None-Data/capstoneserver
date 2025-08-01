@@ -3,7 +3,6 @@ package capstone.probablymainserver.capstoneserver;
 import java.sql.*;
 import java.util.*;
 
-
 public class capstone {
 	public static int registerUser(String UserID, String PassWord) {
     	Connection conn = null;
@@ -22,7 +21,7 @@ public class capstone {
         		stmt.setString(1, UserID);
         		stmt.setString(2, PassWord);
         		stmt.setLong(3, 0L);
-        		stmt.setInt(4, 0);
+        		stmt.setLong(4, 0);
 
         		int rows = stmt.executeUpdate();
         		if (rows > 0) { // 성공 여부 확인
@@ -41,7 +40,8 @@ public class capstone {
 			DatabaseUtil.close(conn);
 		}
     }
-	public static boolean Login(String UserID, String PassWord) {
+	
+	public static int Login(String UserID, String PassWord) {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		
@@ -49,30 +49,31 @@ public class capstone {
 			conn = DatabaseUtil.getConnection();
 			
 			if (!checkUserID(UserID)) { // 아이디 존재 확인
-				return false; // 존재하지 않는 아이디
+				return -3; // 존재하지 않는 아이디
 			}
 			
-			String sql = "SELECT 1 FROM user WHERE username = ? AND userpw = ?";
+			String sql = "SELECT uid FROM user WHERE username = ? AND userpw = ?";
 			stmt = conn.prepareStatement(sql);
 			stmt.setString(1, UserID);
 			stmt.setString(2, PassWord);
 			ResultSet rs = stmt.executeQuery();
 			if(rs.next()) {
-				return true;
+				int uid = rs.getInt("uid");
+				return uid; // 로그인 성공
 			} else {
-				return false;
+				return -4; // 비밀번호 틀림
 			}
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return false;
+			return -2; // 코드 오류
 		} finally {
 			DatabaseUtil.close(stmt);
 			DatabaseUtil.close(conn);
 		}
 	}
 	
-	public static User getUser(String UserID, String PassWord) {
+	public static User getUser(int uid) {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		int myUID;
@@ -84,13 +85,9 @@ public class capstone {
 		try {
 			conn = DatabaseUtil.getConnection();
 			
-			if (!Login(UserID, PassWord)) { // 아이디 존재 확인
-				return null; // 존재하지 않는 아이디
-			}
-			String sql = "SELECT uid, username, tool, allergy FROM user WHERE username = ? AND userpw = ?";
+			String sql = "SELECT uid, username, tool, allergy FROM user WHERE uid = ?";
 			stmt = conn.prepareStatement(sql);
-			stmt.setString(1, UserID);
-			stmt.setString(2, PassWord);
+			stmt.setInt(1, uid);
 			ResultSet rs = stmt.executeQuery();
 			
 			if (rs.next()) {
@@ -120,6 +117,7 @@ public class capstone {
 			DatabaseUtil.close(conn);
 		}
 	}
+	
 	public static ArrayList<Ingredient> showRefrigerator(int uid) {
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -127,7 +125,7 @@ public class capstone {
 		
 		try {
 			conn = DatabaseUtil.getConnection();
-			String sql = "SELECT ingredientname FROM refrigerator WHERE uid = ? ";
+			String sql = "SELECT ingredientname FROM refrigerator WHERE uid = ?";
 			stmt = conn.prepareStatement(sql);
 			stmt.setInt(1, uid);
 			ResultSet rs = stmt.executeQuery();
@@ -157,13 +155,14 @@ public class capstone {
 			DatabaseUtil.close(conn);
 		}
 	}
+	
 	public static boolean checkUserID(String UserID) {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		
         try {
         	conn = DatabaseUtil.getConnection();
-        	String sql = "SELECT uid FROM user WHERE username = ?";
+        	String sql = "SELECT 1 FROM user WHERE username = ?";
 
         	stmt = conn.prepareStatement(sql);
         	stmt.setString(1, UserID);
@@ -185,8 +184,7 @@ public class capstone {
         }
 	}
 	
-	public static int updateUserID(String newUserID, User u) {
-		int uid = u.getUid();
+	public static int updateUserID(String newUserID, int uid) {
 		
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -205,7 +203,6 @@ public class capstone {
 						
 			int rows = stmt.executeUpdate();
 			if (rows > 0) { // 아이디 수정 성공 여부
-				u.setName(newUserID);
 				return 1; // 아이디 수정 성공
 			} else {
 				return 2; // 아이디 수정 실패
@@ -220,8 +217,7 @@ public class capstone {
 		}
 	}
 	
-	public static int updateUserPW(String newPassWord, User u) {
-		int uid = u.getUid();
+	public static int updateUserPW(String newPassWord, int uid) {
 		
 		Connection conn = null;
 		PreparedStatement checkStmt = null;
@@ -262,9 +258,7 @@ public class capstone {
 		}
 	}
 	
-	public static int updateUserTools(Long tool, User u) {
-		int uid = u.getUid();
-		
+	public static int updateUserTools(Long tool, int uid) {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		
@@ -278,7 +272,6 @@ public class capstone {
 						
 			int rows = stmt.executeUpdate();
 			if (rows > 0) { // 도구 수정 성공 여부
-				u.setTools(tool);
 				return 1; // 도구 수정 성공
 			} else {
 				return 2; // 도구 수정 실패
@@ -293,8 +286,7 @@ public class capstone {
 		}
 	}
 	
-	public static int updateUserAllergy(Long allergy, User u) {
-		int uid = u.getUid();
+	public static int updateUserAllergy(Long allergy, int uid) {
 		
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -309,7 +301,6 @@ public class capstone {
 						
 			int rows = stmt.executeUpdate();
 			if (rows > 0) { // 알레르기 수정 성공 여부
-				u.setBanned(allergy);
 				return 1; // 알레르기 수정 성공
 			} else {
 				return 2; // 알레르기 수정 실패
@@ -365,8 +356,7 @@ public class capstone {
 		}
 	}
 	
-	public int addIngredient(Ingredient ing, User u) {
-		int uid = u.getUid();
+	public static int addIngredient(Ingredient ing, int uid) {
 		String name = ing.getName();
 		int code = ing.getCode();
 		int type = checkIngredientType(code);
@@ -393,7 +383,6 @@ public class capstone {
 
         		int rows = stmt.executeUpdate();
         		if (rows > 0) { // 성공 여부 확인
-        			u.addIngredients(ing);
         			return 1; // 재료 추가 성공
         		} else {
         			return 2; // 재료 추가 실패
@@ -462,8 +451,7 @@ public class capstone {
         }
 	}
 	
-	public static int removeIngredient(Ingredient ing, User u) {
-		int uid = u.getUid();
+	public static int removeIngredient(Ingredient ing, int uid) {
 		String name = ing.getName();
 		
 		Connection conn = null;
@@ -480,7 +468,6 @@ public class capstone {
         		
         		int rows = stmt.executeUpdate();
         		if (rows > 0) { // 성공 여부 확인
-        			u.removeIngredients(ing);
         			return 1; // 재료 삭제 성공
         		} else {
         			return 2; // 재료 삭제 실패
@@ -493,6 +480,31 @@ public class capstone {
         
         finally {
         	DatabaseUtil.close(stmt);
+			DatabaseUtil.close(conn);
+		}
+	}
+	
+	public static int clearIngredient(int uid) {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = DatabaseUtil.getConnection();
+			String sql = "DELETE FROM refrigerator WHERE uid = ?";
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, uid);
+			int rows = stmt.executeUpdate();
+			if(rows > 0) {
+				return 1;
+			} else {
+				return 2;
+			}
+			
+		} catch(SQLException e) {
+			e.printStackTrace();
+			return 2;
+		} finally {
+			DatabaseUtil.close(stmt);
 			DatabaseUtil.close(conn);
 		}
 	}
@@ -733,7 +745,7 @@ public class capstone {
 		}
 	}
 	
-	public static int RecipeAddInDB(Recipe recipe, User u) {
+	public static int RecipeAddInDB(Recipe recipe, int uid) {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		
@@ -766,7 +778,6 @@ public class capstone {
 			String foodrecipe = String.join("\n", FoodRecipe);
 			String time = recipe.getTime();
 			int maincode = (mainname != null) ? checkIngredientName(mainname) : 0;
-			int uid = u.getUid();
 			
 			String sql = "INSERT INTO community (foodname, foodingredient, mainingredientcode, tool, foodrecipe, foodtype, time, uid, checkcode, allergy) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			stmt = conn.prepareStatement(sql);
@@ -833,11 +844,9 @@ public class capstone {
         }
 	}
 	
-	public static int RecipeDeleteInDB(int recipeCode, User u) {
+	public static int RecipeDeleteInDB(int recipeCode, int uid) {
 		Connection conn = null;
 		PreparedStatement stmt = null;
-		
-		int uid = u.getUid();
 		
 		try {
 			if(checkRecipeType(recipeCode) == 1) {
@@ -937,7 +946,50 @@ public class capstone {
 		}
 	}
 	
-	public static int RecipeAddInAILike(Recipe recipe, User u) {
+	public static List<Recipe> showRecipeInDB(int uid){
+		ArrayList<Recipe> l = new ArrayList<>();
+		List<Integer> resultRID = LoadRecipeInDB(uid);
+		
+		for (int rid : resultRID) {
+			Recipe r = new Recipe();
+			r = RecipeByCode(rid, uid);
+			if (r != null) {
+				l.add(r);
+			}
+		}
+		
+		return l;
+	}
+	
+	public static List<Integer> LoadRecipeInDB(int uid){
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		ArrayList<Integer> ridList = new ArrayList<>();
+		try {
+			conn = DatabaseUtil.getConnection();
+			
+			String sql = "SELECT rid FROM community WHERE uid = ? AND checkcode = 0";
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, uid);
+			ResultSet rs = stmt.executeQuery();
+			
+			while(rs.next()) {
+				int rid = rs.getInt("rid");
+				ridList.add(rid);
+			}
+			
+			return ridList;
+		} catch(SQLException e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			DatabaseUtil.close(stmt);
+			DatabaseUtil.close(conn);
+		}
+	}
+	
+	public static int RecipeAddInAILike(Recipe recipe, int uid) {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		
@@ -970,7 +1022,6 @@ public class capstone {
 			String foodrecipe = String.join("\n", FoodRecipe);
 			String time = recipe.getTime();
 			int maincode = (mainname != null) ? checkIngredientName(mainname) : 0;
-			int uid = u.getUid();
 			
 			String sql = "INSERT INTO community (foodname, foodingredient, mainingredientcode, tool, foodrecipe, foodtype, time, uid, checkcode, allergy) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			stmt = conn.prepareStatement(sql);
@@ -1002,11 +1053,10 @@ public class capstone {
 		}
 	}
 		
-	public static int RecipeDeleteInAILike(int recipeCode, User u) {
+	public static int RecipeDeleteInAILike(int recipeCode, int uid) {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		
-		int uid = u.getUid();
 		
 		try {
 			if(checkRecipeType(recipeCode) == 0) {
@@ -1030,6 +1080,49 @@ public class capstone {
 		} catch(SQLException e) {
 			e.printStackTrace();
 			return 2; // 에러 발생 (java 코드 문법 틀림 / db 키 조건 부적합 등)
+		} finally {
+			DatabaseUtil.close(stmt);
+			DatabaseUtil.close(conn);
+		}
+	}
+	
+	public static List<Recipe> showRecipeInAILike(int uid){
+		ArrayList<Recipe> l = new ArrayList<>();
+		List<Integer> resultRID = LoadRecipeInDB(uid);
+		
+		for (int rid : resultRID) {
+			Recipe r = new Recipe();
+			r = RecipeByCode(rid, uid);
+			if (r != null) {
+				l.add(r);
+			}
+		}
+		
+		return l;
+	}
+	
+	public static List<Integer> LoadRecipeInAILike(int uid){
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		ArrayList<Integer> ridList = new ArrayList<>();
+		try {
+			conn = DatabaseUtil.getConnection();
+			
+			String sql = "SELECT rid FROM community WHERE uid = ? AND checkcode = 1";
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, uid);
+			ResultSet rs = stmt.executeQuery();
+			
+			while(rs.next()) {
+				int rid = rs.getInt("rid");
+				ridList.add(rid);
+			}
+			
+			return ridList;
+		} catch(SQLException e) {
+			e.printStackTrace();
+			return null;
 		} finally {
 			DatabaseUtil.close(stmt);
 			DatabaseUtil.close(conn);
@@ -1114,4 +1207,3 @@ public class capstone {
 		}
 	}
 }
-

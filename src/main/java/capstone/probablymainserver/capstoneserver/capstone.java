@@ -78,6 +78,7 @@ public class capstone {
 		PreparedStatement stmt = null;
 		int myUID;
 		String userID;
+		String pw;
 		Long tools;
 		Long banned;
 		ArrayList<Ingredient> ing = new ArrayList<>();
@@ -85,7 +86,7 @@ public class capstone {
 		try {
 			conn = DatabaseUtil.getConnection();
 			
-			String sql = "SELECT uid, username, tool, allergy FROM user WHERE uid = ?";
+			String sql = "SELECT uid, username, userpw, tool, allergy FROM user WHERE uid = ?";
 			stmt = conn.prepareStatement(sql);
 			stmt.setInt(1, uid);
 			ResultSet rs = stmt.executeQuery();
@@ -95,12 +96,14 @@ public class capstone {
 				
 				myUID = rs.getInt("uid");
 				userID = rs.getString("username");
+				pw = rs.getString("userpw");
 				tools = rs.getLong("tool");
 				banned = rs.getLong("allergy");
 				ing = showRefrigerator(myUID);
 				
 				user.setUid(myUID);
-				user.setName(userID);
+				user.setUserId(userID);
+				user.setPassword(pw);
 				user.setTools(tools);
 				user.setBanned(banned);
 				user.setIngredients(ing);

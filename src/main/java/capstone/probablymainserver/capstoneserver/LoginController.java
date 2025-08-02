@@ -20,7 +20,7 @@ record LoginRequest(String userId, String password) {}
 record LoginResponse(String accessToken) {}
 
 // 회원가입 요청 DTO
-record SignupRequest(String id, String pw) {}
+record SignupRequest(String userId, String password) {}
 
 @RestController
 @RequestMapping("/api")
@@ -52,9 +52,9 @@ public class LoginController {
     
     @PostMapping("/signup")
     public ResponseEntity<Integer> signup(@RequestBody SignupRequest request) {
-    	System.out.println("[Log] /api/signup 요청 도착: id=" + request.id());
+    	System.out.println("[Log] /api/signup 요청 도착: id=" + request.userId());
     	
-        int success = capstone.registerUser(request.id(), request.pw());
+        int success = capstone.registerUser(request.userId(), request.password());
         return ResponseEntity.ok(success);
     }
     

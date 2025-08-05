@@ -135,8 +135,7 @@ public class RecipesController {
 	{
 		System.out.println("[Log] recipes/recipeToday commanded");
 		
-		// 미완
-		return null;
+		return ResponseEntity.ok(Recipe.today);
 	}
 	@GetMapping("Ingredienttoday")
 	public ResponseEntity<Ingredient> ingredientToday()

@@ -56,7 +56,6 @@ public class aiCallResponse {
     	return recipe;
 	}
 	*/
-	/*
 	public static String TodayMeal(String Time) {//오늘의 요리 레시피 랜덤 추천 프롬프트
     	
     	String prompt = Time + "에 먹을 음식 레시피를 알려줘"
@@ -67,5 +66,4 @@ public class aiCallResponse {
     	
     	return recipe;
     }
-    */
 }

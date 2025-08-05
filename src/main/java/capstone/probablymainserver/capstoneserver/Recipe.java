@@ -14,6 +14,8 @@ public class Recipe {
 	private String time;	// 소요 시간
 	private int ai;	// ai가 만들었어?
 	
+	public static Recipe today;
+	
 	public int getCode()
 	{
 		return code;

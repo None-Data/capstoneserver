@@ -48,4 +48,9 @@ public class UseAi {
 		Ingredient.today = UseAi.makeIngredient(aiCallResponse.ingredientsCommenSense());
 		return;
 	}
+	public static void setTodayMeal(String time)
+	{
+		Recipe.today = UseAi.makeRecipe(aiCallResponse.TodayMeal(time));
+		return;
+	}
 }

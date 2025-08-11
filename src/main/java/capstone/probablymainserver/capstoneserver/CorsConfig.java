@@ -17,7 +17,13 @@ public class CorsConfig {
                 .allowedOrigins("http://localhost:5500") // 로컬 HTML 실행 주소 (포트 맞게 변경)
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowCredentials(true);
+        
+        registry.addMapping("/recipes/**")
+        .allowedOrigins("http://localhost:5500")
+        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+        .allowCredentials(true);
       }
+      
     };
   }
 }

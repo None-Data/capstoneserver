@@ -1091,7 +1091,7 @@ public class capstone {
 	
 	public static List<Recipe> showRecipeInAILike(int uid){
 		ArrayList<Recipe> l = new ArrayList<>();
-		List<Integer> resultRID = LoadRecipeInDB(uid);
+		List<Integer> resultRID = LoadRecipeInAILike(uid);
 		
 		for (int rid : resultRID) {
 			Recipe r = new Recipe();

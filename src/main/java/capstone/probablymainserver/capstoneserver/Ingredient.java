@@ -26,4 +26,17 @@ public class Ingredient extends Item {
 	{
 		return count;
 	}
+	@Override
+	public boolean equals(Object o) {
+	    if (this == o) return true;
+	    if (o == null || getClass() != o.getClass()) return false;
+	    Ingredient that = (Ingredient) o;
+	    // 재료의 이름(name)이 같으면 같은 객체로 판단
+	    return getName() != null ? getName().equals(that.getName()) : that.getName() == null;
+	}
+
+	@Override
+	public int hashCode() {
+	    return getName() != null ? getName().hashCode() : 0;
+	}
 }

@@ -463,7 +463,7 @@ public class capstone {
         try {
         		conn = DatabaseUtil.getConnection();
         		        		
-        		String sql = "DELETE FROM refrigerator WHERE ingredientname = ? AND uid = ?)";
+        		String sql = "DELETE FROM refrigerator WHERE ingredientname = ? AND uid = ?";
         		stmt = conn.prepareStatement(sql);
 
         		stmt.setString(1, name);

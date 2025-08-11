@@ -98,7 +98,7 @@ public class LoginController {
         }
         if (user.getBanned() != prev.getBanned())
         {
-        	capstone.updateUserTools(user.getBanned(), uid);
+        	capstone.updateUserAllergy(user.getBanned(), uid);
         }
         
         for (Ingredient ing : prev.getIngredients())

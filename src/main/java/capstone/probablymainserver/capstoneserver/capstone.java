@@ -1209,4 +1209,69 @@ public class capstone {
 			DatabaseUtil.close(conn);
 		}
 	}
+	// uid와 비밀번호를 둘 다 사용하여 유저 데이터 삭제
+		public static int unsubscribeUser(int uid, String pw) {
+			Connection conn = null;
+			PreparedStatement checkStmt = null;
+			PreparedStatement updateStmt = null;
+			try {
+				conn = DatabaseUtil.getConnection();
+				String checkSql = "SELECT 1 FROM user WHERE uid = ? AND userpw = ?";
+				checkStmt = conn.prepareStatement(checkSql);
+				checkStmt.setInt(1, uid);
+				checkStmt.setString(2, pw);
+				ResultSet rs = checkStmt.executeQuery();
+				
+				if(!rs.next()) {
+					return 4;
+				}
+				
+				String updateSql = "DELETE FROM user WHERE uid = ?";
+				updateStmt = conn.prepareStatement(updateSql);
+				updateStmt.setInt(1, uid);
+				int rows = updateStmt.executeUpdate();
+				
+				if(rows > 0) {
+					clearIngredient(uid);
+					return 1;
+				} else {
+					return 2;
+				}
+				
+			} catch(SQLException e) {
+				e.printStackTrace();
+				return 2;
+			} finally {
+				DatabaseUtil.close(updateStmt);
+				DatabaseUtil.close(checkStmt);
+				DatabaseUtil.close(conn);
+			}
+		}
+		/* uid만 사용하여 유저 데이터 삭제
+		public static int unsubscribeUser(int uid) {
+			Connection conn = null;
+			PreparedStatement stmt = null;
+			try {
+				conn = DatabaseUtil.getConnection();
+				String sql = "DELETE FROM user WHERE uid = ?";
+				stmt = conn.prepareStatement(sql);
+				stmt.setInt(1, uid);
+				int rows = stmt.executeUpdate();
+				
+				if(rows > 0) {
+					clearIngredient(uid);
+					return 1;
+				} else {
+					return 2;
+				}
+				
+			} catch(SQLException e) {
+				e.printStackTrace();
+				return 2;
+			} finally {
+				DatabaseUtil.close(stmt);
+				DatabaseUtil.close(conn);
+			}
+		}
+		*/
 }

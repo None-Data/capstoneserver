@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,6 +22,9 @@ record LoginResponse(String accessToken) {}
 
 // 회원가입 요청 DTO
 record SignupRequest(String userId, String password) {}
+
+//회원탈퇴 요청 DTO
+record DeleteAccountRequest(String password) {}
 
 @RestController
 @RequestMapping("/api")
@@ -116,6 +120,15 @@ public class LoginController {
         	}
         }
         return ResponseEntity.ok(1);
+    }
+    
+    @DeleteMapping("/delete")
+    public ResponseEntity<Integer> deleteAccount(@RequestBody DeleteAccountRequest pw)
+    {
+    	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        int uid = (int) auth.getPrincipal();
+        
+        return ResponseEntity.ok(capstone.unsubscribeUser(uid, pw.password()));
     }
     
 }

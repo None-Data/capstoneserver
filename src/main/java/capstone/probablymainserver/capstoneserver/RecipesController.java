@@ -51,7 +51,32 @@ public class RecipesController {
 	    }
 	    return ResponseEntity.ok(recipeList);
 	}
-
+	@PostMapping("/searchFromAIAddAllow")
+	public ResponseEntity<List<Recipe>> searchFromAIAddAllow(@RequestBody DataForGetRecipe dfgr)
+	{
+		System.out.println("[Log] recipes/searchFromAI commanded");
+		
+		String Banned = BannedIng.getBannedList(dfgr.getBanned()).toString();
+		String ToolsHave = Tool.getToolListByCodes(dfgr.getTool());
+		
+		List<Recipe> recipeList = new ArrayList<>();
+	    String aiResponse;
+	    if (dfgr.getMainIngredients() != null)
+	    {
+	    	aiResponse = aiCallResponse.MealByMain_AddAllow(dfgr.getMainIngredients().getName(), dfgr.getSubIngList(), Banned, ToolsHave);
+	    }
+	    else
+	    {
+	    	aiResponse = aiCallResponse.Meal_AddAllow(dfgr.getSubIngList(), Banned, ToolsHave);
+	    }
+	    
+	    for (String line : aiResponse.split("\n"))
+	    {
+	    	Recipe r = UseAi.makeRecipe(line);
+	    	recipeList.add(r);
+	    }
+	    return ResponseEntity.ok(recipeList);
+	}
 	@PostMapping("/like")
 	public ResponseEntity<Integer> like(@RequestBody Recipe recipe)
 	{

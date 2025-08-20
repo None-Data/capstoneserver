@@ -37,16 +37,19 @@ public class RecipesController {
 	    String aiResponse;
 	    if (dfgr.getMainIngredients() != null)
 	    {
-	    	aiResponse = aiCallResponse.MealByMain(dfgr.getMainIngredients().getName(), dfgr.getSubIngList(), Banned, ToolsHave);
+	    	if (dfgr.getType() == 2) aiResponse = aiCallResponse.DessertByMain(dfgr.getMainIngredients().getName(), dfgr.getSubIngList(), Banned, ToolsHave);
+	    	else aiResponse = aiCallResponse.MealByMain(dfgr.getMainIngredients().getName(), dfgr.getSubIngList(), Banned, ToolsHave);
 	    }
 	    else
 	    {
-	    	aiResponse = aiCallResponse.Meal(dfgr.getSubIngList(), Banned, ToolsHave);
+	    	if (dfgr.getType() == 2) aiResponse = aiCallResponse.Dessert(dfgr.getSubIngList(), Banned, ToolsHave);
+	    	else aiResponse = aiCallResponse.Meal(dfgr.getSubIngList(), Banned, ToolsHave);
 	    }
 	    
 	    for (String line : aiResponse.split("\n"))
 	    {
 	    	Recipe r = UseAi.makeRecipe(line);
+	    	r.setType(dfgr.getType());
 	    	recipeList.add(r);
 	    }
 	    return ResponseEntity.ok(recipeList);
@@ -63,16 +66,19 @@ public class RecipesController {
 	    String aiResponse;
 	    if (dfgr.getMainIngredients() != null)
 	    {
-	    	aiResponse = aiCallResponse.MealByMain_AddAllow(dfgr.getMainIngredients().getName(), dfgr.getSubIngList(), Banned, ToolsHave);
+	    	if (dfgr.getType() == 2) aiResponse = aiCallResponse.DessertByMain_AddAllow(dfgr.getMainIngredients().getName(), dfgr.getSubIngList(), Banned, ToolsHave);
+	    	else aiResponse = aiCallResponse.MealByMain_AddAllow(dfgr.getMainIngredients().getName(), dfgr.getSubIngList(), Banned, ToolsHave);
 	    }
 	    else
 	    {
-	    	aiResponse = aiCallResponse.Meal_AddAllow(dfgr.getSubIngList(), Banned, ToolsHave);
+	    	if (dfgr.getType() == 2) aiResponse = aiCallResponse.Dessert_AddAllow(dfgr.getSubIngList(), Banned, ToolsHave);
+	    	else aiResponse = aiCallResponse.Meal_AddAllow(dfgr.getSubIngList(), Banned, ToolsHave);
 	    }
 	    
 	    for (String line : aiResponse.split("\n"))
 	    {
 	    	Recipe r = UseAi.makeRecipe(line);
+	    	r.setType(dfgr.getType());
 	    	recipeList.add(r);
 	    }
 	    return ResponseEntity.ok(recipeList);

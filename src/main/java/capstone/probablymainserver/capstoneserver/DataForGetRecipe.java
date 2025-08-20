@@ -7,6 +7,7 @@ public class DataForGetRecipe {
 	private ArrayList<Ingredient> subIngredients;	// 서브 재료
 	private long Banned;
 	private long Tool;
+	private int Type;
 	
 	public Ingredient getMainIngredients() {
 		return mainIngredients;
@@ -40,6 +41,12 @@ public class DataForGetRecipe {
 			sb.append(subIngredients.get(i).getName() + ",");
 		}
 		return sb.toString();
+	}
+	public int getType() {
+		return Type;
+	}
+	public void setType(int type) {
+		Type = type;
 	}
 	
 }

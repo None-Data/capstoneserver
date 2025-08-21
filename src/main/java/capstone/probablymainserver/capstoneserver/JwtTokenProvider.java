@@ -20,6 +20,7 @@ public class JwtTokenProvider {
     // application.properties 파일에서 설정값 주입
     public JwtTokenProvider(@Value("${jwt.secret}") String secretKey,
             @Value("${jwt.expiration-in-ms}") long validityInMs) {
+    	 System.out.println("!!! [DEBUG] SERVER IS USING JWT KEY: " + secretKey);
 		System.out.println("Raw secretKey: [" + secretKey + "]");
 		secretKey = secretKey.trim();
 		byte[] keyBytes = Base64.getDecoder().decode(secretKey);

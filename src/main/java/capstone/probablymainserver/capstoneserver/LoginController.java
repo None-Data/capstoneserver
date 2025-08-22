@@ -86,6 +86,7 @@ public class LoginController {
     {
     	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         int uid = (int) auth.getPrincipal();
+        System.out.println("[Log] auth/update commanded");
         User prev = capstone.getUser(uid);	// 얘는 uid, userID,tools,banned, ing 밖에 없음!
         
         if (!user.getUserId().equals(prev.getUserId()))
@@ -127,6 +128,7 @@ public class LoginController {
     {
     	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         int uid = (int) auth.getPrincipal();
+        System.out.println("[Log] auth/delete commanded");
         
         return ResponseEntity.ok(capstone.unsubscribeUser(uid, pw.password()));
     }

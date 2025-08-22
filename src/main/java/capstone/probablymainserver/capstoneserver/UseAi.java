@@ -35,7 +35,6 @@ public class UseAi {
 		}
 		recipe.setMainIngredients(ing);
 		recipe.setRecipe(r);
-		recipe.setTools(0L);
 		return recipe;
 	}
 	public static Ingredient makeIngredient(String data)

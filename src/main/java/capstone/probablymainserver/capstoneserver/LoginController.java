@@ -38,14 +38,14 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
-    	System.out.println("[Log] /api/login 요청 도착");
+    	System.out.printf("[Log] /api/login ");
         // 1. 직접 로그인 메서드로 사용자 인증
         int uid = capstone.Login(loginRequest.userId(), loginRequest.password());
 
         if (uid > 0) {
             // 2. 인증 성공 시 JWT 생성
             String token = jwtTokenProvider.createToken(uid);
-            
+            System.out.printf("(userId: %s, uid: %d)\n", loginRequest.userId(), uid);
             // 3. 생성된 토큰을 응답
             return ResponseEntity.ok(new LoginResponse(token));
         } else {
@@ -56,7 +56,7 @@ public class LoginController {
     
     @PostMapping("/signup")
     public ResponseEntity<Integer> signup(@RequestBody SignupRequest request) {
-    	System.out.println("[Log] /api/signup 요청 도착: id=" + request.userId());
+    	System.out.println("[Log] /api/signup id=" + request.userId());
     	
         int success = capstone.registerUser(request.userId(), request.password());
         return ResponseEntity.ok(success);
@@ -68,7 +68,7 @@ public class LoginController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         int uid = (int)auth.getPrincipal();  // 토큰에서 추출된 uId
 
-        System.out.println("[Log] auth/me commanded");
+        System.out.printf("[Log] auth/me commanded ");
 
         // userId로 사용자 조회 (비밀번호는 필요 없음)
         User user = capstone.getUser(uid); // 또는 userService.findUser(userId)
@@ -76,7 +76,7 @@ public class LoginController {
         if (user == null) {
             return ResponseEntity.status(401).body("유저 정보 없음");
         }
-
+        System.out.printf("(uid: %d)", uid);
         user.setUid(0);
         return ResponseEntity.ok(user);
     }
@@ -86,8 +86,9 @@ public class LoginController {
     {
     	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         int uid = (int) auth.getPrincipal();
-        System.out.println("[Log] auth/update commanded");
+        System.out.printf("[Log] auth/update commanded ");
         User prev = capstone.getUser(uid);	// 얘는 uid, userID,tools,banned, ing 밖에 없음!
+        System.out.printf("(uid: %d)", uid);
         
         if (!user.getUserId().equals(prev.getUserId()))
         {
@@ -128,7 +129,8 @@ public class LoginController {
     {
     	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         int uid = (int) auth.getPrincipal();
-        System.out.println("[Log] auth/delete commanded");
+        System.out.printf("[Log] auth/delete commanded ");
+        System.out.printf("(uid: %d)", uid);
         
         return ResponseEntity.ok(capstone.unsubscribeUser(uid, pw.password()));
     }

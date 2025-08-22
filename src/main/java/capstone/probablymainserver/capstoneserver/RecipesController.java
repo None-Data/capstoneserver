@@ -17,10 +17,11 @@ public class RecipesController {
 	@PostMapping("/searchFromDB")
 	public ResponseEntity<List<Recipe>> searchFromDB(@RequestBody DBRecipeSearchRequest req)
 	{
-		System.out.println("[Log] recipes/searchFromDB commanded");
+		System.out.printf("[Log] recipes/searchFromDB commanded ");
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         int uid = (int) auth.getPrincipal();
+        System.out.printf("(uid: %d)\n",uid);
         
         return ResponseEntity.ok(capstone.RecipeListSearchFromDB(req.ing(), uid));
 	}
@@ -28,8 +29,12 @@ public class RecipesController {
 	@PostMapping("/searchFromAI")
 	public ResponseEntity<List<Recipe>> searchFromAI(@RequestBody DataForGetRecipe dfgr)
 	{
-		System.out.println("[Log] recipes/searchFromAI commanded");
-		
+		System.out.printf("[Log] recipes/searchFromAI commanded ");
+
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        int uid = (int) auth.getPrincipal();
+        System.out.printf("(uid: %d)\n",uid);
+        
 		String Banned = BannedIng.getBannedList(dfgr.getBanned()).toString();
 		String ToolsHave = Tool.getToolListByCodes(dfgr.getTool());
 		
@@ -57,7 +62,11 @@ public class RecipesController {
 	@PostMapping("/searchFromAIAddAllow")
 	public ResponseEntity<List<Recipe>> searchFromAIAddAllow(@RequestBody DataForGetRecipe dfgr)
 	{
-		System.out.println("[Log] recipes/searchFromAI commanded");
+		System.out.printf("[Log] recipes/searchFromAI commanded ");
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        int uid = (int) auth.getPrincipal();
+        System.out.printf("(uid: %d)\n",uid);
 		
 		String Banned = BannedIng.getBannedList(dfgr.getBanned()).toString();
 		String ToolsHave = Tool.getToolListByCodes(dfgr.getTool());
@@ -86,10 +95,11 @@ public class RecipesController {
 	@PostMapping("/like")
 	public ResponseEntity<Integer> like(@RequestBody Recipe recipe)
 	{
-		System.out.println("[Log} recipes/like commanded");
+		System.out.printf("[Log} recipes/like commanded ");
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         int uid = (int) auth.getPrincipal();
+        System.out.printf("(uid: %d, recipe name: %s)\n", uid, recipe.getName());
         
         return ResponseEntity.ok(capstone.RecipeAddInAILike(recipe, uid));
 	}
@@ -97,10 +107,11 @@ public class RecipesController {
 	@DeleteMapping("/like")
 	public ResponseEntity<Integer> likeDelete(@RequestParam("recipeCode") int rcode)
 	{
-		System.out.println("[Log} recipes/delike commanded");
+		System.out.printf("[Log} recipes/delike commanded ");
 
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         int uid = (int) auth.getPrincipal();
+        System.out.printf("(uid: %d, recipe name: %s)\n", uid, rcode);
         
 		return ResponseEntity.ok(capstone.RecipeDeleteInAILike(rcode, uid));
 	}
@@ -108,10 +119,11 @@ public class RecipesController {
 	@GetMapping("/like")
 	public ResponseEntity<List<Recipe>> liked()
 	{
-		System.out.println("[Log] recipes/liked commanded");
+		System.out.printf("[Log] recipes/liked commanded ");
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         int uid = (int) auth.getPrincipal();
+        System.out.printf("(uid: %d)\n",uid);
 		
 		return ResponseEntity.ok(capstone.showRecipeInAILike(uid));
 	}
@@ -119,10 +131,11 @@ public class RecipesController {
 	@GetMapping("/added") 
 	public ResponseEntity<List<Recipe>> getRecipeAddedByUser()
 	{
-		System.out.println("[Log] recipes/addedList commanded");
+		System.out.printf("[Log] recipes/addedList commanded ");
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         int uid = (int) auth.getPrincipal();
+        System.out.printf("(uid: %d)\n",uid);
         
 		return ResponseEntity.ok(capstone.showRecipeInDB(uid));
 	}
@@ -130,10 +143,11 @@ public class RecipesController {
 	@PostMapping("/added") 
 	public ResponseEntity<Integer> addRecipe(@RequestBody Recipe data)
 	{
-		System.out.println("[Log] recipes/add commanded");
+		System.out.printf("[Log] recipes/add commanded ");
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         int uid = (int) auth.getPrincipal();
+        System.out.printf("(uid: %d, recipe name: %s)\n", uid, data.getName());
         
         return ResponseEntity.ok(capstone.RecipeAddInDB(data, uid));
 	}
@@ -141,11 +155,12 @@ public class RecipesController {
 	@PutMapping("/added") 
 	public ResponseEntity<Integer> updateRecipe(@RequestBody Recipe data) 
 	{
-		System.out.println("[Log] recipes/update commanded");
+		System.out.printf("[Log] recipes/update commanded ");
 		
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         int uid = (int) auth.getPrincipal();
+        System.out.printf("(uid: %d, recipe name: %s)\n", uid, data.getName());
 		
         
 		return ResponseEntity.ok(capstone.RecipeUpdateInDB(data, data.getCode()));
@@ -154,10 +169,11 @@ public class RecipesController {
 	@DeleteMapping("/added") 
 	public ResponseEntity<Integer> deleteRecipe(@RequestParam("recipeCode") int rcode)
 	{
-		System.out.println("[Log] recipes/delete commanded");
+		System.out.printf("[Log] recipes/delete commanded ");
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         int uid = (int) auth.getPrincipal();
+        System.out.printf("(uid: %d, recipe code: %d)\n", uid, rcode);
         
 		return ResponseEntity.ok(capstone.RecipeDeleteInDB(rcode, uid));
 	}

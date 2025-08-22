@@ -20,6 +20,7 @@ public class JwtTokenProvider {
     // application.properties 파일에서 설정값 주입
     public JwtTokenProvider(@Value("${jwt.secret}") String secretKey,
             @Value("${jwt.expiration-in-ms}") long validityInMs) {
+    	 System.out.println("!!! [DEBUG] SERVER IS USING JWT KEY: " + secretKey);
 		System.out.println("Raw secretKey: [" + secretKey + "]");
 		secretKey = secretKey.trim();
 		byte[] keyBytes = Base64.getDecoder().decode(secretKey);
@@ -57,6 +58,8 @@ public class JwtTokenProvider {
             return true;
         } catch (Exception e) {
             // 유효하지 않은 토큰 (만료, 변조 등)
+        	 System.err.println("!!! [DEBUG] JWT Token Validation Failed !!!");
+             e.printStackTrace(); // <-- 가장 중요한 부분
             return false;
         }
     }

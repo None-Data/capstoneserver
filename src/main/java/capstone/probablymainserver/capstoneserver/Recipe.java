@@ -86,11 +86,13 @@ public class Recipe {
 	}
 	public void addMainIngredients(Ingredient i)
 	{
+		if (mainIngredients == null) mainIngredients = new ArrayList<Ingredient>();
 		mainIngredients.add(i);
 		return;
 	}
 	public void addSubIngredients(Ingredient i)
 	{
+		if (subIngredients == null) subIngredients = new ArrayList<Ingredient>();
 		subIngredients.add(i);
 		return;
 	}

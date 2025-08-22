@@ -76,7 +76,7 @@ public class LoginController {
         if (user == null) {
             return ResponseEntity.status(401).body("유저 정보 없음");
         }
-        System.out.printf("(uid: %d)", uid);
+        System.out.printf("(uid: %d)\\n", uid);
         user.setUid(0);
         return ResponseEntity.ok(user);
     }
@@ -88,7 +88,7 @@ public class LoginController {
         int uid = (int) auth.getPrincipal();
         System.out.printf("[Log] auth/update commanded ");
         User prev = capstone.getUser(uid);	// 얘는 uid, userID,tools,banned, ing 밖에 없음!
-        System.out.printf("(uid: %d)", uid);
+        System.out.printf("(uid: %d)\n", uid);
         
         if (!user.getUserId().equals(prev.getUserId()))
         {
@@ -130,7 +130,7 @@ public class LoginController {
     	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         int uid = (int) auth.getPrincipal();
         System.out.printf("[Log] auth/delete commanded ");
-        System.out.printf("(uid: %d)", uid);
+        System.out.printf("(uid: %d)\n", uid);
         
         return ResponseEntity.ok(capstone.unsubscribeUser(uid, pw.password()));
     }

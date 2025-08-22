@@ -198,6 +198,7 @@ public class Recipe {
 	}
 	public boolean addTools(Long l)
 	{
+		if (tools == null) tools = 0L;
 		if ((tools & l) == l)
 		{
 			return false;

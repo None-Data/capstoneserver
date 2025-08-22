@@ -28,6 +28,9 @@ public class UseAi {
 			case '#':	// 소요시간
 				recipe.setTime(tdata[i].substring(1));
 				break;
+			case '○':	// 도구
+				recipe.addTools(Tool.getCodeByToolList((tdata[i].substring(1))));
+				break;
 			}
 		}
 		recipe.setMainIngredients(ing);

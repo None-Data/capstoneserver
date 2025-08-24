@@ -8,7 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-record DBRecipeSearchRequest(List<String> ing) {}
+record DBRecipeSearchRequest(List<String> ing, Integer type) {}
 
 @RestController
 @RequestMapping("/api/recipes") 
@@ -21,9 +21,18 @@ public class RecipesController {
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         int uid = (int) auth.getPrincipal();
-        System.out.printf("(uid: %d)\n",uid);
+        System.out.printf("(uid: %d)",uid);
         
-        return ResponseEntity.ok(capstone.RecipeListSearchFromDB(req.ing(), uid));
+        if (req.type() == null)
+        {
+        	System.out.printf(" type null\n");
+            return ResponseEntity.ok(capstone.RecipeListSearchFromDB(req.ing(), uid));
+        }
+        else
+        {
+        	System.out.printf(" type %d\n", req.type());
+        	return ResponseEntity.ok(capstone.RecipeListSearchByTypeFromDB(req.ing(), uid, req.type()));
+        }
 	}
 
 	@PostMapping("/searchFromAI")

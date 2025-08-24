@@ -625,6 +625,7 @@ public class capstone {
 				recipes.add(foodrecipe);
 				recipe.setRecipe(recipes);
 				recipe.setTime(time);
+				recipe.setType(foodtype);
 				mainname = checkIngredientCode(maincode);
 				maintype = checkIngredientType(maincode);
 				main.setCode(maincode);
@@ -781,6 +782,7 @@ public class capstone {
 			String foodrecipe = String.join("\n", FoodRecipe);
 			String time = recipe.getTime();
 			int maincode = (mainname != null) ? checkIngredientName(mainname) : 0;
+			int foodtype = recipe.getType();
 			
 			String sql = "INSERT INTO community (foodname, foodingredient, mainingredientcode, tool, foodrecipe, foodtype, time, uid, checkcode, allergy) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			stmt = conn.prepareStatement(sql);
@@ -789,7 +791,7 @@ public class capstone {
 			stmt.setInt(3, maincode);
 			stmt.setLong(4, tool);
 			stmt.setString(5, foodrecipe);
-			stmt.setInt(6, 0);
+			stmt.setInt(6, foodtype);
 			stmt.setString(7, time);
 			stmt.setInt(8, uid);
 			stmt.setInt(9, 0);
@@ -890,6 +892,7 @@ public class capstone {
 		ArrayList<String> FoodRecipe = null;
 		String foodrecipe;
 		String time;
+		int foodtype;
 		
 		try {
 			if(checkRecipeType(recipeCode) == 1) {
@@ -922,16 +925,18 @@ public class capstone {
 			foodrecipe = FoodRecipe.toString();
 			time = recipeData.getTime();
 			maincode = (mainname != null) ? checkIngredientName(mainname) : 0;
+			foodtype = recipeData.getType();
 			
-			String sql = "UPDATE community SET foodname = ?, foodingredient = ?, mainingredientcode = ?, tool = ?, foodrecipe = ?, time = ? WHERE rid = ?";
+			String sql = "UPDATE community SET foodname = ?, foodingredient = ?, mainingredientcode = ?, tool = ?, foodrecipe = ?, foodtype = ?, time = ? WHERE rid = ?";
 			stmt = conn.prepareStatement(sql);
 			stmt.setString(1, foodName);
 			stmt.setString(2, FoodIngredients);
 			stmt.setInt(3, maincode);
 			stmt.setLong(4, tool);
 			stmt.setString(5, foodrecipe);
-			stmt.setString(6, time);
-			stmt.setInt(7, recipeCode);
+			stmt.setInt(6, foodtype);
+			stmt.setString(7, time);
+			stmt.setInt(8, recipeCode);
 			
 			int rows = stmt.executeUpdate();
 			if(rows > 0) { // 레시피 수정 성공 여부
@@ -1025,6 +1030,7 @@ public class capstone {
 			String foodrecipe = String.join("\n", FoodRecipe);
 			String time = recipe.getTime();
 			int maincode = (mainname != null) ? checkIngredientName(mainname) : 0;
+			int foodtype = recipe.getType();
 			
 			String sql = "INSERT INTO community (foodname, foodingredient, mainingredientcode, tool, foodrecipe, foodtype, time, uid, checkcode, allergy) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			stmt = conn.prepareStatement(sql);
@@ -1033,7 +1039,7 @@ public class capstone {
 			stmt.setInt(3, maincode);
 			stmt.setLong(4, tool);
 			stmt.setString(5, foodrecipe);
-			stmt.setInt(6, 0);
+			stmt.setInt(6, foodtype);
 			stmt.setString(7, time);
 			stmt.setInt(8, uid);
 			stmt.setInt(9, 1);
@@ -1210,68 +1216,298 @@ public class capstone {
 		}
 	}
 	// uid와 비밀번호를 둘 다 사용하여 유저 데이터 삭제
-		public static int unsubscribeUser(int uid, String pw) {
-			Connection conn = null;
-			PreparedStatement checkStmt = null;
-			PreparedStatement updateStmt = null;
-			try {
-				conn = DatabaseUtil.getConnection();
-				String checkSql = "SELECT 1 FROM user WHERE uid = ? AND userpw = ?";
-				checkStmt = conn.prepareStatement(checkSql);
-				checkStmt.setInt(1, uid);
-				checkStmt.setString(2, pw);
-				ResultSet rs = checkStmt.executeQuery();
-				
-				if(!rs.next()) {
-					return 4;
-				}
-				
-				String updateSql = "DELETE FROM user WHERE uid = ?";
-				updateStmt = conn.prepareStatement(updateSql);
-				updateStmt.setInt(1, uid);
-				int rows = updateStmt.executeUpdate();
-				
-				if(rows > 0) {
-					clearIngredient(uid);
-					return 1;
-				} else {
-					return 2;
-				}
-				
-			} catch(SQLException e) {
-				e.printStackTrace();
+	public static int unsubscribeUser(int uid, String pw) {
+		Connection conn = null;
+		PreparedStatement checkStmt = null;
+		PreparedStatement updateStmt = null;
+		try {
+			conn = DatabaseUtil.getConnection();
+			String checkSql = "SELECT 1 FROM user WHERE uid = ? AND userpw = ?";
+			checkStmt = conn.prepareStatement(checkSql);
+			checkStmt.setInt(1, uid);
+			checkStmt.setString(2, pw);
+			ResultSet rs = checkStmt.executeQuery();
+			
+			if(!rs.next()) {
+				return 4;
+			}
+			
+			String updateSql = "DELETE FROM user WHERE uid = ?";
+			updateStmt = conn.prepareStatement(updateSql);
+			updateStmt.setInt(1, uid);
+			int rows = updateStmt.executeUpdate();
+			
+			if(rows > 0) {
+				clearIngredient(uid);
+				return 1;
+			} else {
 				return 2;
-			} finally {
-				DatabaseUtil.close(updateStmt);
-				DatabaseUtil.close(checkStmt);
-				DatabaseUtil.close(conn);
+			}
+			
+		} catch(SQLException e) {
+			e.printStackTrace();
+			return 2;
+		} finally {
+			DatabaseUtil.close(updateStmt);
+			DatabaseUtil.close(checkStmt);
+			DatabaseUtil.close(conn);
+		}
+	}
+	/* uid만 사용하여 유저 데이터 삭제
+	public static int unsubscribeUser(int uid) {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		try {
+			conn = DatabaseUtil.getConnection();
+			String sql = "DELETE FROM user WHERE uid = ?";
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, uid);
+			int rows = stmt.executeUpdate();
+			
+			if(rows > 0) {
+				clearIngredient(uid);
+				return 1;
+			} else {
+				return 2;
+			}
+			
+		} catch(SQLException e) {
+			e.printStackTrace();
+			return 2;
+		} finally {
+			DatabaseUtil.close(stmt);
+			DatabaseUtil.close(conn);
+		}
+	}
+	 */
+	
+	// 찜 목록 음식 타입 별 레시피 rid 수집
+	public static List<Integer> searchTypeInAILike(int type, int uid){
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ArrayList<Integer> list = new ArrayList<>();
+		int rid;
+		
+		try {
+			conn = DatabaseUtil.getConnection();
+			
+			String sql = "SELECT rid FROM community WHERE foodtype = ? AND uid = ? AND checkcode = 1";
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, type);
+			stmt.setInt(2, uid);
+			ResultSet rs = stmt.executeQuery();
+			
+			while(rs.next()) {
+				rid = rs.getInt("rid");
+				list.add(rid);
+			}
+			
+			return list;
+			
+		} catch(SQLException e) {
+			e.printStackTrace();
+			return new ArrayList<>();
+		} finally {
+			DatabaseUtil.close(stmt);
+			DatabaseUtil.close(conn);
+		}
+	}
+	
+	// 찜 목록 음식 타입 별 검색된 rid 레시피 정보
+	public static List<Recipe> showRecipeListByTypeInAILike(int type, int uid){
+		ArrayList<Recipe> l = new ArrayList<>();
+		List<Integer> resultRID = searchTypeInAILike(type, uid);
+		
+		for (int rid : resultRID) {
+			Recipe r = new Recipe();
+			r = RecipeByCode(rid, uid);
+			if (r != null) {
+				l.add(r);
 			}
 		}
-		/* uid만 사용하여 유저 데이터 삭제
-		public static int unsubscribeUser(int uid) {
-			Connection conn = null;
-			PreparedStatement stmt = null;
-			try {
-				conn = DatabaseUtil.getConnection();
-				String sql = "DELETE FROM user WHERE uid = ?";
-				stmt = conn.prepareStatement(sql);
-				stmt.setInt(1, uid);
-				int rows = stmt.executeUpdate();
-				
-				if(rows > 0) {
-					clearIngredient(uid);
-					return 1;
-				} else {
-					return 2;
-				}
-				
-			} catch(SQLException e) {
-				e.printStackTrace();
-				return 2;
-			} finally {
-				DatabaseUtil.close(stmt);
-				DatabaseUtil.close(conn);
+		
+		return l;
+	}
+	
+	// 찜 목록 음식 타입 + 사용 재료 조건 검색된 rid 레시피 정보
+	public static List<Recipe> RecipeListSearchByTypeFromAILike(List<String> ingredients, int uid, int type){
+		ArrayList<Recipe> l = new ArrayList<>();
+		List<Integer> resultRID = null;
+		
+		for (String ingr : ingredients) {
+			List<Integer> current = searchCodeAndTypeInAILike(ingr, uid, type);
+			
+			if (current == null) {
+				continue;
+			}
+			
+			if (resultRID == null) {
+				resultRID = new ArrayList<>(current);
+			} else {
+				resultRID.retainAll(current);
 			}
 		}
-		*/
+		
+		if (resultRID == null || resultRID.isEmpty()) {
+			return new ArrayList<>();
+		}
+		
+		for (int rid : resultRID) {
+			Recipe r = new Recipe();
+			r = RecipeByCode(rid, uid);
+			if (r != null) {
+				l.add(r);
+			}
+		}
+		
+		return l;
+	}
+	
+	// 찜 목록 음식 타입 + 사용 재료 조건 검색 레시피 rid 수집
+	public static List<Integer> searchCodeAndTypeInAILike(String ingr, int uid, int type){
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ArrayList<Integer> list = new ArrayList<>();
+		int rid;
+		
+		try {
+			conn = DatabaseUtil.getConnection();
+			
+			String sql = "SELECT rid FROM community WHERE foodingredient LIKE ? AND uid = ? AND checkcode = 1 AND foodtype = ?";
+			stmt = conn.prepareStatement(sql);
+			stmt.setString(1, "%" + ingr + "%");
+			stmt.setInt(2, uid);
+			stmt.setInt(3, type);
+			ResultSet rs = stmt.executeQuery();
+			
+			while(rs.next()) {
+				rid = rs.getInt("rid");
+				list.add(rid);
+			}
+			
+			return list;
+			
+		} catch(SQLException e) {
+			e.printStackTrace();
+			return new ArrayList<>();
+		} finally {
+			DatabaseUtil.close(stmt);
+			DatabaseUtil.close(conn);
+		}
+	}
+	
+	// 개인 저장 음식 타입별 레시피 rid 수집
+	public static List<Integer> searchTypeInDB(int type, int uid){
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ArrayList<Integer> list = new ArrayList<>();
+		int rid;
+		
+		try {
+			conn = DatabaseUtil.getConnection();
+			
+			String sql = "SELECT rid FROM community WHERE foodtype = ? AND uid = ? AND checkcode = 0";
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, type);
+			stmt.setInt(2, uid);
+			ResultSet rs = stmt.executeQuery();
+			
+			while(rs.next()) {
+				rid = rs.getInt("rid");
+				list.add(rid);
+			}
+			
+			return list;
+			
+		} catch(SQLException e) {
+			e.printStackTrace();
+			return new ArrayList<>();
+		} finally {
+			DatabaseUtil.close(stmt);
+			DatabaseUtil.close(conn);
+		}
+	}
+	
+	// 개인 저장 음식 타입별 검색된 rid 레시피 정보
+	public static List<Recipe> showRecipeListByTypeInDB(int type, int uid){
+		ArrayList<Recipe> l = new ArrayList<>();
+		List<Integer> resultRID = searchTypeInDB(type, uid);
+		
+		for (int rid : resultRID) {
+			Recipe r = new Recipe();
+			r = RecipeByCode(rid, uid);
+			if (r != null) {
+				l.add(r);
+			}
+		}
+		
+		return l;
+	}
+	
+	// 개인 저장 음식 타입 + 사용 재료 조건 검색된 rid 레시피 정보
+	public static List<Recipe> RecipeListSearchByTypeFromDB(List<String> ingredients, int uid, int type){
+		ArrayList<Recipe> l = new ArrayList<>();
+		List<Integer> resultRID = null;
+		
+		for (String ingr : ingredients) {
+			List<Integer> current = searchCodeAndTypeInDB(ingr, uid, type);
+			
+			if (current == null) {
+				continue;
+			}
+			
+			if (resultRID == null) {
+				resultRID = new ArrayList<>(current);
+			} else {
+				resultRID.retainAll(current);
+			}
+		}
+		
+		if (resultRID == null || resultRID.isEmpty()) {
+			return new ArrayList<>();
+		}
+		
+		for (int rid : resultRID) {
+			Recipe r = new Recipe();
+			r = RecipeByCode(rid, uid);
+			if (r != null) {
+				l.add(r);
+			}
+		}
+		
+		return l;
+	}
+	
+	// 개인 저장 음식 타입 + 사용 재료 조건 검색 레시피 rid 수집
+	public static List<Integer> searchCodeAndTypeInDB(String ingr, int uid, int type){
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ArrayList<Integer> list = new ArrayList<>();
+		int rid;
+		
+		try {
+			conn = DatabaseUtil.getConnection();
+			
+			String sql = "SELECT rid FROM community WHERE foodingredient LIKE ? AND uid = ? AND checkcode = 0 AND foodtype = ?";
+			stmt = conn.prepareStatement(sql);
+			stmt.setString(1, "%" + ingr + "%");
+			stmt.setInt(2, uid);
+			stmt.setInt(3, type);
+			ResultSet rs = stmt.executeQuery();
+			
+			while(rs.next()) {
+				rid = rs.getInt("rid");
+				list.add(rid);
+			}
+			
+			return list;
+			
+		} catch(SQLException e) {
+			e.printStackTrace();
+			return new ArrayList<>();
+		} finally {
+			DatabaseUtil.close(stmt);
+			DatabaseUtil.close(conn);
+		}
+	}
 }

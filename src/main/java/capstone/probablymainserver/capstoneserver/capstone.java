@@ -922,7 +922,7 @@ public class capstone {
 			String mainname = !main.isEmpty() ? main.get(0).getName() : null;
 			tool = recipeData.getTools();
 			FoodRecipe = recipeData.getRecipe();
-			foodrecipe = FoodRecipe.toString();
+	        foodrecipe = String.join("\n", FoodRecipe);
 			time = recipeData.getTime();
 			maincode = (mainname != null) ? checkIngredientName(mainname) : 0;
 			foodtype = recipeData.getType();

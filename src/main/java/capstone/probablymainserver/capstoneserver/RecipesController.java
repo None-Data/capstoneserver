@@ -203,13 +203,13 @@ public class RecipesController {
 		return ResponseEntity.ok(Ingredient.today);
 	}
 	
-	@PostMapping("/api/setTodayMeal")
+	@PostMapping("/setTodayMeal")
     public void setTodayMeal() {
         System.out.println("[Log] 랜덤 시간 식사 강제 설정 " + System.currentTimeMillis());
         UseAi.setTodayMeal("랜덤 시간");
         return;
     }
-	@PostMapping("/api/setTodayIng")
+	@PostMapping("/setTodayIng")
     public void setTodayIng() {
         System.out.println("[Log] 랜덤 재료 강제 설정 " + System.currentTimeMillis());
         UseAi.setTodayIngredient();

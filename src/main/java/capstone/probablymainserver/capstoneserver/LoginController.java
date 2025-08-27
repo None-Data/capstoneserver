@@ -76,7 +76,7 @@ public class LoginController {
         if (user == null) {
             return ResponseEntity.status(401).body("유저 정보 없음");
         }
-        System.out.printf("(uid: %d)\\n", uid);
+        System.out.printf("(uid: %d)\n", uid);
         user.setUid(0);
         return ResponseEntity.ok(user);
     }

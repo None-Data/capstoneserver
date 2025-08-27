@@ -40,7 +40,7 @@ public class UseAi {
 	public static Ingredient makeIngredient(String data)
 	{
 		Ingredient ing = new Ingredient();
-		String[] tdata = data.split("\\$");
+		String[] tdata = data.split("@");
 		
 		ing.setName(tdata[0]);
 		ing.setDescription(tdata[1]);

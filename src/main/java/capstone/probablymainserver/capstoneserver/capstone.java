@@ -1510,4 +1510,69 @@ public class capstone {
 			DatabaseUtil.close(conn);
 		}
 	}
+	// 카카오 관련 뭐시깽이
+	public static User findByKakaoId(Long kakaoId) {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = DatabaseUtil.getConnection();
+			String sql = "SELECT uid FROM user WHERE kakao_id = ?";
+			stmt = conn.prepareStatement(sql);
+			stmt.setLong(1, kakaoId);
+			ResultSet rs = stmt.executeQuery();
+			
+			if(rs.next()) {
+				int uid = rs.getInt("uid");
+				return getUser(uid); // 기존 getUser 함수를 재활용하여 User 객체 반환
+			} else {
+				return null; // 사용자가 없으면 null 반환
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			DatabaseUtil.close(stmt);
+			DatabaseUtil.close(conn);
+		}
+	}
+	
+	public static User registerNewKakaoUser(KakaoUserInfo userInfo) {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		String username = userInfo.getNickname();
+		// 만약 동일한 닉네임이 이미 존재한다면, 뒤에 랜덤 숫자를 붙여 중복을 피합니다.
+		if (checkUserID(username)) {
+			username = username + "_" + (int)(Math.random() * 10000);
+		}
+
+		try {
+			conn = DatabaseUtil.getConnection();
+			String sql = "INSERT INTO user (username, userpw, tool, allergy, kakao_id) VALUES (?, ?, ?, ?, ?)";
+			stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+			stmt.setString(1, username);
+			stmt.setString(2, "kakao_login_password"); // 비밀번호는 임의의 값으로 설정
+			stmt.setLong(3, 0L);
+			stmt.setLong(4, 0);
+			stmt.setLong(5, userInfo.getId());
+
+			int rows = stmt.executeUpdate();
+			if (rows > 0) {
+				ResultSet generatedKeys = stmt.getGeneratedKeys();
+				if (generatedKeys.next()) {
+					int newUid = generatedKeys.getInt(1);
+					return getUser(newUid); // 새로 생성된 사용자의 정보를 반환
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DatabaseUtil.close(stmt);
+			DatabaseUtil.close(conn);
+		}
+		return null;
+	}
 }

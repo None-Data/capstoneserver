@@ -1,8 +1,12 @@
 package capstone.probablymainserver.capstoneserver;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +29,9 @@ record SignupRequest(String userId, String password) {}
 
 //회원탈퇴 요청 DTO
 record DeleteAccountRequest(String password) {}
+
+//카카오 로그인 요청 DTO
+record KakaoLoginRequest(String accessToken) {}
 
 @RestController
 @RequestMapping("/api")
@@ -134,5 +141,64 @@ public class LoginController {
         
         return ResponseEntity.ok(capstone.unsubscribeUser(uid, pw.password()));
     }
+    
+    @PostMapping("/auth/kakao")
+    public ResponseEntity<?> kakaoLogin(@RequestBody KakaoLoginRequest kakaoRequest) {
+        String accessToken = kakaoRequest.accessToken();
+        KakaoUserInfo kakaoUserInfo = getKakaoUserInfo(accessToken);
+
+        if (kakaoUserInfo == null) {
+            return ResponseEntity.status(401).body("Invalid Kakao Token");
+        }
+
+        User user = capstone.findByKakaoId(kakaoUserInfo.getId());
+
+        if (user == null) {
+            user = capstone.registerNewKakaoUser(kakaoUserInfo);
+        }
+        
+        if (user == null) {
+            return ResponseEntity.status(500).body("Failed to login or signup with Kakao");
+        }
+
+        String appToken = jwtTokenProvider.createToken(user.getUid());
+        
+        return ResponseEntity.ok(new LoginResponse(appToken));
+    }
+
+    private KakaoUserInfo getKakaoUserInfo(String accessToken) {
+        String requestUrl = "https://kapi.kakao.com/v2/user/me";
+        try {
+            URL url = new URL(requestUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Authorization", "Bearer " + accessToken);
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode != 200) {
+                return null;
+            }
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String line = "";
+            String result = "";
+            while ((line = br.readLine()) != null) {
+                result += line;
+            }
+
+            JSONParser parser = new JSONParser();
+            JSONObject jsonObject = (JSONObject) parser.parse(result);
+            JSONObject properties = (JSONObject) jsonObject.get("properties");
+
+            Long id = (Long) jsonObject.get("id");
+            String nickname = (String) properties.get("nickname");
+
+            return new KakaoUserInfo(id, nickname);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     
 }

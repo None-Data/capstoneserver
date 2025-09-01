@@ -145,26 +145,34 @@ public class LoginController {
     @PostMapping("/kakao")
     public ResponseEntity<?> kakaoLogin(@RequestBody KakaoLoginRequest kakaoRequest) {
         String accessToken = kakaoRequest.accessToken();
+        System.out.println("[DEBUG] Received Kakao AccessToken = " + accessToken);
+
         KakaoUserInfo kakaoUserInfo = getKakaoUserInfo(accessToken);
 
         if (kakaoUserInfo == null) {
+            System.out.println("[DEBUG] kakaoUserInfo is NULL (Invalid Kakao Token?)");
             return ResponseEntity.status(401).body("Invalid Kakao Token");
         }
 
         User user = capstone.findByKakaoId(kakaoUserInfo.getId());
+        System.out.println("[DEBUG] Find User by KakaoId = " + kakaoUserInfo.getId() + " → " + user);
 
         if (user == null) {
             user = capstone.registerNewKakaoUser(kakaoUserInfo);
+            System.out.println("[DEBUG] Register New Kakao User → " + user);
         }
         
         if (user == null) {
+            System.out.println("[ERROR] Failed to login or signup with Kakao");
             return ResponseEntity.status(500).body("Failed to login or signup with Kakao");
         }
 
         String appToken = jwtTokenProvider.createToken(user.getUid());
-        
+        System.out.println("[DEBUG] Issued AppToken = " + appToken);
+
         return ResponseEntity.ok(new LoginResponse(appToken));
     }
+
 
     private KakaoUserInfo getKakaoUserInfo(String accessToken) {
         String requestUrl = "https://kapi.kakao.com/v2/user/me";
@@ -175,19 +183,30 @@ public class LoginController {
             conn.setRequestProperty("Authorization", "Bearer " + accessToken);
 
             int responseCode = conn.getResponseCode();
+            System.out.println("[DEBUG] Kakao API Response Code = " + responseCode);
+
+            BufferedReader br;
+            if (responseCode == 200) {
+                br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+            } else {
+                br = new BufferedReader(new InputStreamReader(conn.getErrorStream(), "UTF-8"));
+            }
+
+            StringBuilder result = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                result.append(line);
+            }
+            br.close();
+
+            System.out.println("[DEBUG] Kakao API Response Body = " + result);
+
             if (responseCode != 200) {
                 return null;
             }
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String line = "";
-            String result = "";
-            while ((line = br.readLine()) != null) {
-                result += line;
-            }
-
             JSONParser parser = new JSONParser();
-            JSONObject jsonObject = (JSONObject) parser.parse(result);
+            JSONObject jsonObject = (JSONObject) parser.parse(result.toString());
             JSONObject properties = (JSONObject) jsonObject.get("properties");
 
             Long id = (Long) jsonObject.get("id");
@@ -199,6 +218,7 @@ public class LoginController {
             return null;
         }
     }
+
 
     
 }

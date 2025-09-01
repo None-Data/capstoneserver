@@ -142,7 +142,7 @@ public class LoginController {
         return ResponseEntity.ok(capstone.unsubscribeUser(uid, pw.password()));
     }
     
-    @PostMapping("/auth/kakao")
+    @PostMapping("/kakao")
     public ResponseEntity<?> kakaoLogin(@RequestBody KakaoLoginRequest kakaoRequest) {
         String accessToken = kakaoRequest.accessToken();
         KakaoUserInfo kakaoUserInfo = getKakaoUserInfo(accessToken);

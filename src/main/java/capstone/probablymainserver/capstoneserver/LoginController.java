@@ -210,7 +210,7 @@ public class LoginController {
             JSONObject properties = (JSONObject) jsonObject.get("properties");
 
             Long id = (Long) jsonObject.get("id");
-            String nickname = "Null_Exception_Hell";
+            String nickname = "user1";
 
             return new KakaoUserInfo(id, nickname);
         } catch (Exception e) {

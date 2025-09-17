@@ -12,7 +12,7 @@ import org.json.simple.parser.JSONParser;
 
 public class getFromAI {
 	
-	private static final String API_KEY = "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";
+	private static final String API_KEY = "unknown";
     private static final int MAX_TOKENS = 4096;
     
 	

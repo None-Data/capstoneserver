@@ -13,7 +13,7 @@ import org.json.simple.parser.JSONParser;
 
 public class RecipeAIHelper {//RecipeAIHelper.getRecipeFromAI(prompt)를 호출하면 기능을 사용할 수 있다.
 
-    private static final String API_KEY = "sk-proj-wQC6iyhdUVnP8csN0w1FGY_1UPizt11-74CMMB5FbJ0GPJeCVnmJp7pkppPeHJalXbyMEMeMjbT3BlbkFJ-A6S2YI0l0-NgBBFxr1DSubEqm__jwoei8Hj6jU1VKKcrwjIwPvMTFfjkE-YXDKXvbY-1aEA5f1pAzb4PB_n9gdZWjgjSJskT3BlbkFJc1avLfPL5pYpKfusCu6VEx5SqeWHd0Xw9bRPkxB2_Zht1et6mpgKg7dJO6xqkJPDlHFGUUURkA";
+    private static final String API_KEY = "Unknown";
     private static final int MAX_TOKENS = 4096;
     
     

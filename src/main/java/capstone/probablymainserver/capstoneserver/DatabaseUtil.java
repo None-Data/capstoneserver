@@ -3,9 +3,9 @@ package capstone.probablymainserver.capstoneserver;
 import java.sql.*;
 
 public class DatabaseUtil {
-	private static final String url = "jdbc:mysql://database-capstone.c1uq8cggg6iv.ap-northeast-2.rds.amazonaws.com:3306/recipe?useSSL=false&serverTimezone=UTC";
-	private static final String username = "admin";
-	private static final String password = "Ygnx57913!";
+	private static final String url = "unknown";
+	private static final String username = "unknown";
+	private static final String password = "unknown";
 	
 	public static Connection getConnection() throws SQLException {
 		return DriverManager.getConnection(url, username, password);
